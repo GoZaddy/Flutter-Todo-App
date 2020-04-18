@@ -7,7 +7,7 @@ class TodoList{
   String listId;
 
   TodoList({
-    @required this.backgroundColor,
+    this.backgroundColor,
     @required this.listTitle,
     this.listOfTodos
   });

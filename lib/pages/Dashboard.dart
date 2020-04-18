@@ -48,6 +48,7 @@ TodoList _todoList3 = TodoList(
 
 class DashboardScreen extends StatelessWidget {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  VoidCallback _openBlankTodoBottomSheet;
   @override
   Widget build(BuildContext context) {
     User currentUser = Provider.of<User>(context);
@@ -56,7 +57,7 @@ class DashboardScreen extends StatelessWidget {
       child: Scaffold(
         key: _scaffoldKey,
         body: currentUser.exists ?
-          Dashboard(currentUser, _scaffoldKey)
+          Dashboard(currentUser, _scaffoldKey, _openBlankTodoBottomSheet)
               :
           Center(child: CircularProgressIndicator()), 
           endDrawer: Container(
@@ -137,7 +138,10 @@ class DashboardScreen extends StatelessWidget {
                                 Icons.insert_drive_file,
                                 color: Colors.white,
                               ),
-                              onPressed: (){},
+                              onPressed: (){  
+                                //Navigator.pop(context);
+                                _openBlankTodoBottomSheet();  
+                              },
                             )
                           ],
                         ),
@@ -165,7 +169,7 @@ class DashboardScreen extends StatelessWidget {
                               onPressed: (){
                                 authService.signOut();
                                 Navigator.pop(context);
-                                Navigator.popAndPushNamed(context, "/");   
+                                  
                               },
                             )
                           ],
@@ -186,11 +190,13 @@ class DashboardScreen extends StatelessWidget {
 class Dashboard extends StatefulWidget {
   GlobalKey<ScaffoldState> scaffoldKey;
   dynamic user;
+  VoidCallback openBlankTodoBottomSheet;
   
 
-  Dashboard(dynamic user, GlobalKey<ScaffoldState> scaffoldKey){
+  Dashboard(dynamic user, GlobalKey<ScaffoldState> scaffoldKey, VoidCallback openBlankTodoBottomSheet){
     this.user = user;
     this.scaffoldKey = scaffoldKey;
+    this.openBlankTodoBottomSheet = openBlankTodoBottomSheet;
 
    
   }
@@ -203,6 +209,7 @@ class _DashboardState extends State<Dashboard> {
   PersistentBottomSheetController _controller;
   TodoList _currentTodoList;
   StreamController<TodoList> _currentTodoListController = new StreamController<TodoList>();
+ 
 
   @override
   void initState() {
@@ -235,7 +242,15 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    
+   widget.openBlankTodoBottomSheet = (){
+     _currentTodoListController.sink.add(
+       TodoList(
+         listTitle: "",
+         listOfTodos: []
+       )
+     );
+     _showBottomSheet();
+   };
     return ListView(
       padding: EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0, bottom: 20.0),
       shrinkWrap: true,

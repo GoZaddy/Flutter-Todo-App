@@ -50,7 +50,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
       height: MediaQuery.of(context).size.height * 0.7,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: widget.todoList.backgroundColor,
+        color: widget.todoList.backgroundColor != null ? widget.todoList.backgroundColor : _listOfColorsForColorPicker[0],
         borderRadius: BorderRadius.only(topRight: Radius.circular(50))
       ),
       child: ListView(
@@ -169,8 +169,43 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                 );
               }
             ).toList()
+          ),
+          Row(
+            children: <Widget>[
+              Container(
+                height: 20,
+                width: 20,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5.0),
+                  color: Colors.white,
+                ),
+                
+                child: Center(
+                  child: Icon(
+                    Icons.add,
+                    size: 16,
+                    color: widget.todoList.backgroundColor,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 30.0
+              ),
+              Expanded(
+                child: TextField(
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontFamily: "Poppins",
+                    color: Colors.white
+                  ),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Add a new todo"
+                  ),
+                ),
+              ),
+            ],
           )
-          
         ],
       ),
     );

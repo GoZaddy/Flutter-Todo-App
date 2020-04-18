@@ -56,8 +56,8 @@ class _ListTodoWidgetState extends State<ListTodoWidget> {
                     color: _listTodoPassed.isDone ? Color(0x80ffffff):Colors.white
                 ),
               ),
-              widget.showDetails ? SizedBox(height: 20.0): SizedBox(height: 0.0),
-              widget.showDetails ? Container(
+              widget.showDetails && widget.todo.details != "" ? SizedBox(height: 20.0): SizedBox(height: 0.0),
+              widget.showDetails && widget.todo.details != "" ? Container(
                 width: MediaQuery.of(context).size.width * 0.7 - 40,
                 child: Text(
                   widget.todo.details,

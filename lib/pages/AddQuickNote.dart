@@ -24,11 +24,22 @@ class _AddQuickNoteState extends State<AddQuickNote> {
   Iterable<String> _suggestions = [...adjectives.take(10), ...nouns.take(5)];
 
   @override
+  void initState() {
+    super.initState();
+    _suggestionsTextController.stream.listen(
+      (String suggestion){
+        _textController.text = _textController.text + suggestion;
+      }
+    );
+  }
+  @override
   void dispose() {
-    // TODO: implement dispose
+    _suggestionsTextController.close();
     _textController.dispose();
     super.dispose();
   }
+
+  
   @override
   Widget build(BuildContext context) {
     FocusNode _textInputFocusNode = new FocusNode();
@@ -104,14 +115,9 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                     children: _suggestions.map(
                       (word){
                         return SuggestionTile(
-                          title: word.toString(),
-                          
+                          title: word.toString(),                        
                           onTap: (){
-                            setState(() {
-                              _textController.text = _textController.text + word.toString();
-                              
-                            });
-                            
+                            _suggestionsTextController.sink.add(word);                            
                           },
                         );
                       }
@@ -138,6 +144,7 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                         onPressed: (){
                           setState(() {
                             _quickNotePriority = Priority.fromPriorityValue(priority);
+                            
                             _selectedPriorityValue = priority;
                           });
                         },
