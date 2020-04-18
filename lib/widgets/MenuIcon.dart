@@ -11,7 +11,7 @@ class MenuIcon extends StatelessWidget {
         children: <Widget>[
           Container(
             height: 3.0,
-            width: 30.0,
+            width: 20.0,
             
             decoration: BoxDecoration(
               color: Color(0xff616B77),
@@ -21,7 +21,7 @@ class MenuIcon extends StatelessWidget {
           SizedBox(height: 7.0),
           Container(
             height: 3.0,
-            width: 20.0,
+            width: 10.0,
             decoration: BoxDecoration(
               color: Color(0xff616B77),
               borderRadius: BorderRadius.circular(5)

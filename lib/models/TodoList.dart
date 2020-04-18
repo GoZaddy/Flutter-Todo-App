@@ -4,6 +4,7 @@ class TodoList{
   Color backgroundColor;
   String listTitle;
   List<ListTodo> listOfTodos;
+  String listId;
 
   TodoList({
     @required this.backgroundColor,

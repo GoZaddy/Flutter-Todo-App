@@ -32,7 +32,7 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
                 child: Checkbox(
                   
                   value: quickNoteInfo.isDone,
-                  activeColor: Colors.blue,
+                  activeColor: Color(0x80878CAC),
                   checkColor: Colors.white,
                   onChanged: (bool isChecked){
                     //print(_isDone);
@@ -50,7 +50,8 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
                 quickNoteInfo.title,
                 style: TextStyle(
                   fontSize: 18.0,
-                  color: Color(0xff878CAC),
+                  decoration: quickNoteInfo.isDone ? TextDecoration.lineThrough : TextDecoration.none,
+                  color: quickNoteInfo.isDone? Color(0x4D878CAC) :Color(0xff878CAC),
                   fontFamily: "Poppins"
                 ),
               )

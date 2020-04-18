@@ -5,6 +5,7 @@ class User {
   String uid;
   String displayName;
   bool exists = false;
+  
   final Firestore _db = Firestore.instance;
 
   User.fromUid(FirebaseUser user){
@@ -13,8 +14,12 @@ class User {
     this.exists = true;
   }
 
-  void getQuickNotes(){
-
+  List<DocumentSnapshot> getQuickNotes(){
+    _db.collection("quickNotes").document(uid).collection("userNotes").snapshots().listen(
+      (snapshot){
+        return snapshot.documents;
+      }
+    );
   }
 
   void updateQuickNotes(){
@@ -22,11 +27,19 @@ class User {
   }
 
   void getLists(){
-
+    _db.collection("lists").document(uid).collection("userLists").snapshots().listen(
+      (snapshot){
+        return snapshot.documents;
+      }
+    );
   }
 
   void updateList(){
 
+  }
+
+  void getList(){
+    
   }
   
   
