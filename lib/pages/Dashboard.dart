@@ -56,7 +56,7 @@ class DashboardScreen extends StatelessWidget {
       child: Scaffold(
         key: _scaffoldKey,
         body: currentUser.exists ?
-          Dashboard(user: currentUser, scaffoldKey: _scaffoldKey)
+          Dashboard(currentUser, _scaffoldKey)
               :
           Center(child: CircularProgressIndicator()), 
           endDrawer: Container(
@@ -183,33 +183,28 @@ class DashboardScreen extends StatelessWidget {
 }
 
 
-class Dashboard extends StatefulWidget {
-  final GlobalKey<ScaffoldState> scaffoldKey;
-  final dynamic user;
-
-  Dashboard({this.user, this.scaffoldKey});
-
-  @override
-  _DashboardState createState() => _DashboardState();
-}
-
-class _DashboardState extends State<Dashboard> {
+class Dashboard extends StatelessWidget {
+  GlobalKey<ScaffoldState> scaffoldKey;
+  dynamic user;
   TodoList _currentTodoList;
   PersistentBottomSheetController _controller;
   StreamController<TodoList> _currentTodoListController;
 
-   _currentTodoListController.stream.listen(
+  Dashboard(dynamic user, GlobalKey<ScaffoldState> scaffoldKey){
+    this.user = user;
+    this.scaffoldKey = scaffoldKey;
+
+    _currentTodoListController.stream.listen(
       (TodoList todo){
       _currentTodoList = todo;
   });
+  }
   
-
   void _showBottomSheet(){
-    _controller = widget.scaffoldKey.currentState.showBottomSheet((context){
+    _controller = this.scaffoldKey.currentState.showBottomSheet((context){
       return ListBottomSheet(
         controller: _controller,
-        todoList:
-        
+        todoList: _currentTodoList,
         closeBottomSheet: _closeBottomSheet,
       );
     });
@@ -236,7 +231,7 @@ class _DashboardState extends State<Dashboard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              'Hello ${widget.user.displayName}',
+              'Hello ${this.user.displayName}',
               style: TextStyle(
                 fontSize: 32.0,
                 fontFamily: "Poppins",
@@ -250,7 +245,7 @@ class _DashboardState extends State<Dashboard> {
                   color: Colors.white,
               ),
               onPressed: (){
-                widget.scaffoldKey.currentState.openEndDrawer();
+                this.scaffoldKey.currentState.openEndDrawer();
               },
             )
           ],
@@ -330,36 +325,28 @@ class _DashboardState extends State<Dashboard> {
                     ListWidget(
                       todoList: _todoList,
                       onTap: (){
-                        setState(() {
-                          _currentTodoList = _todoList;
-                        });
+                        _currentTodoListController.sink.add(_todoList);
                         _showBottomSheet();
                       },
                     ),
                     ListWidget(
                       todoList: _todoList2,
                       onTap: (){
-                        setState(() {
-                          _currentTodoList = _todoList2;
-                        });
+                        _currentTodoListController.sink.add(_todoList2);
                         _showBottomSheet();
                       },
                     ),
                     ListWidget(
                       todoList: _todoList3,
                       onTap: (){
-                        setState(() {
-                          _currentTodoList = _todoList3;
-                        });
+                        _currentTodoListController.sink.add(_todoList3);
                         _showBottomSheet();
                       },
                     ),
                     ListWidget(
                       todoList: _todoList,
                       onTap: (){
-                        setState(() {
-                          _currentTodoList = _todoList;
-                        });
+                        _currentTodoListController.sink.add(_todoList);
                         _showBottomSheet();
                       },
                     )
@@ -371,4 +358,9 @@ class _DashboardState extends State<Dashboard> {
       ]   
     );
   }
+  
+}
+
+class _DashboardState extends State<Dashboard> {
+  
 }
