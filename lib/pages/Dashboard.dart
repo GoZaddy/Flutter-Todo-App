@@ -183,28 +183,47 @@ class DashboardScreen extends StatelessWidget {
 }
 
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   GlobalKey<ScaffoldState> scaffoldKey;
   dynamic user;
-  TodoList _currentTodoList;
-  PersistentBottomSheetController _controller;
-  StreamController<TodoList> _currentTodoListController;
+  
 
   Dashboard(dynamic user, GlobalKey<ScaffoldState> scaffoldKey){
     this.user = user;
     this.scaffoldKey = scaffoldKey;
 
-    _currentTodoListController.stream.listen(
+   
+  }
+
+  @override
+  _DashboardState createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  PersistentBottomSheetController _controller;
+  TodoList _currentTodoList;
+  StreamController<TodoList> _currentTodoListController = new StreamController<TodoList>();
+
+  @override
+  void initState() {
+    super.initState();
+     _currentTodoListController.stream.listen(
       (TodoList todo){
       _currentTodoList = todo;
-  });
+    });
   }
-  
+
+  @override
+  void dispose() {
+    _currentTodoListController.close();
+    super.dispose();
+  }
+
   void _showBottomSheet(){
-    _controller = this.scaffoldKey.currentState.showBottomSheet((context){
+    _controller = this.widget.scaffoldKey.currentState.showBottomSheet((context){
       return ListBottomSheet(
         controller: _controller,
-        todoList: _currentTodoList,
+        todoList: this._currentTodoList,
         closeBottomSheet: _closeBottomSheet,
       );
     });
@@ -231,7 +250,7 @@ class Dashboard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              'Hello ${this.user.displayName}',
+              'Hello ${this.widget.user.displayName}',
               style: TextStyle(
                 fontSize: 32.0,
                 fontFamily: "Poppins",
@@ -245,7 +264,7 @@ class Dashboard extends StatelessWidget {
                   color: Colors.white,
               ),
               onPressed: (){
-                this.scaffoldKey.currentState.openEndDrawer();
+                this.widget.scaffoldKey.currentState.openEndDrawer();
               },
             )
           ],
@@ -358,9 +377,5 @@ class Dashboard extends StatelessWidget {
       ]   
     );
   }
-  
 }
 
-class _DashboardState extends State<Dashboard> {
-  
-}

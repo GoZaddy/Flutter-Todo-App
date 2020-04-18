@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:random_words/random_words.dart';
 import 'package:todo_app/models/Priority.dart';
@@ -12,7 +14,7 @@ class AddQuickNote extends StatefulWidget {
 
 class _AddQuickNoteState extends State<AddQuickNote> {
   String _quickNoteTitle;
-
+  StreamController<String> _suggestionsTextController = new StreamController<String>();
   Priority _quickNotePriority;
   List<int> _priorityValues = [1,2,3];
   int _selectedPriorityValue;
@@ -29,6 +31,7 @@ class _AddQuickNoteState extends State<AddQuickNote> {
   }
   @override
   Widget build(BuildContext context) {
+    FocusNode _textInputFocusNode = new FocusNode();
     return Scaffold(
       body: ListView(
         children: <Widget>[
@@ -62,6 +65,7 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                   children: <Widget>[
                     Expanded(
                       child: TextField(
+                        focusNode: _textInputFocusNode,
                         controller: _textController,
                         style: TextStyle(
                             fontSize: 27.0,
