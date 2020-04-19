@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:random_words/random_words.dart';
 import 'package:todo_app/models/Priority.dart';
+import 'package:todo_app/models/QuickNote.dart';
+import 'package:todo_app/models/User.dart';
 import 'package:todo_app/widgets/SelectPriorityButton.dart';
 import 'package:todo_app/widgets/SmallButton.dart';
 import 'package:todo_app/widgets/SuggestionTile.dart';
@@ -15,7 +18,7 @@ class AddQuickNote extends StatefulWidget {
 class _AddQuickNoteState extends State<AddQuickNote> {
   String _quickNoteTitle;
   StreamController<String> _suggestionsTextController = new StreamController<String>();
-  Priority _quickNotePriority;
+  Priority _quickNotePriority = Priority.fromPriorityValue(3);
   List<int> _priorityValues = [1,2,3];
   int _selectedPriorityValue;
 
@@ -40,9 +43,16 @@ class _AddQuickNoteState extends State<AddQuickNote> {
   }
 
   
+  
   @override
   Widget build(BuildContext context) {
     FocusNode _textInputFocusNode = new FocusNode();
+    User currentUser = Provider.of<User>(context);
+
+    _textController.addListener((){
+      _quickNoteTitle = _textController.text;
+      print(_quickNoteTitle);
+    });
     return Scaffold(
       body: ListView(
         children: <Widget>[
@@ -94,7 +104,25 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                         Icons.check,
                         color: Colors.white,
                       ),
-                      onPressed: (){},
+                      onPressed: (){
+                        currentUser.addQuickNote(
+                          {
+                            "priority": _quickNotePriority.priorityValue,
+                            "title": _quickNoteTitle,
+                            "isDone": false
+                          }
+                        );
+                          showDialog(
+                            context: context,
+                            builder: (context){
+                              return AlertDialog(
+                                title: Text("New Quick note added"),
+                              );
+                            }
+                          );
+                        _quickNoteTitle = "";
+                        _quickNotePriority = null;
+                      },
                     )
                   ],
                 ),

@@ -62,7 +62,7 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
             height: 7.0,
             width: 7.0,
             decoration: BoxDecoration(
-              color: Colors.red[500],
+              color: quickNoteInfo.priority.color,
               borderRadius: BorderRadius.circular(10.0)
             ),
           )

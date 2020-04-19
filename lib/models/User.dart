@@ -14,14 +14,18 @@ class User {
     this.exists = true;
   }
 
-  List<DocumentSnapshot> getQuickNotes(){
-    _db.collection("quickNotes").document(uid).collection("userNotes").snapshots().listen(
-      (snapshot){
-        return snapshot.documents;
-      }
-    );
+  Stream<QuerySnapshot> get quickNotes{
+   return _db.collection("quickNotes").document(uid).collection("userNotes").snapshots();
   }
 
+
+  void addQuickNote(Map<String, dynamic> quickNoteData) {
+    _db.collection("quickNotes").document(uid).collection("userNotes").add({
+      'title': quickNoteData['title'],
+      'priority': quickNoteData['priority'],
+      'isDone': quickNoteData['isDone']
+    });
+  }
   void updateQuickNotes(){
 
   }
