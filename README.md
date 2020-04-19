@@ -1,4 +1,4 @@
-# todo_app
+# Todo_app
 
 A todo app built with flutter and firebase
 <p float= "left">
