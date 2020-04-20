@@ -1,15 +1,14 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/constants/Constants.dart';
 import 'package:todo_app/models/Priority.dart';
 import 'package:todo_app/models/QuickNote.dart';
 import 'package:todo_app/models/User.dart';
 import 'package:todo_app/services/AuthService.dart';
 import 'package:todo_app/widgets/ListBottomSheet.dart';
-import 'package:todo_app/widgets/ListTodoWidget.dart';
 import 'package:todo_app/widgets/ListWidget.dart';
 import 'package:todo_app/widgets/MenuIcon.dart';
 import 'package:todo_app/widgets/QuickNoteWidget.dart';
@@ -47,7 +46,7 @@ TodoList _todoList3 = TodoList(
     listOfTodos: _aListofListTodos);
 
 class DashboardScreen extends StatelessWidget {
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   VoidCallback _openBlankTodoBottomSheet;
   @override
   Widget build(BuildContext context) {
@@ -131,8 +130,8 @@ class DashboardScreen extends StatelessWidget {
                               color: Colors.white,
                             ),
                             onPressed: () {
-                              //Navigator.pop(context);
-                              _openBlankTodoBottomSheet();
+                              Navigator.pop(context);
+                              Navigator.pushNamed(context, "/addList");
                             },
                           )
                         ],
@@ -339,45 +338,102 @@ class _DashboardState extends State<Dashboard> {
             ],
           ),
           SizedBox(height: 30.0),
-          Container(
-            width: MediaQuery.of(context).size.width - 40,
-            height: 400.0,
-            child:
-                ListView(scrollDirection: Axis.horizontal, children: <Widget>[
-              Row(
-                children: <Widget>[
-                  ListWidget(
-                    todoList: _todoList,
-                    onTap: () {
-                      _currentTodoListController.sink.add(_todoList);
-                      _showBottomSheet();
-                    },
-                  ),
-                  ListWidget(
-                    todoList: _todoList2,
-                    onTap: () {
-                      _currentTodoListController.sink.add(_todoList2);
-                      _showBottomSheet();
-                    },
-                  ),
-                  ListWidget(
-                    todoList: _todoList3,
-                    onTap: () {
-                      _currentTodoListController.sink.add(_todoList3);
-                      _showBottomSheet();
-                    },
-                  ),
-                  ListWidget(
-                    todoList: _todoList,
-                    onTap: () {
-                      _currentTodoListController.sink.add(_todoList);
-                      _showBottomSheet();
-                    },
-                  )
-                ],
-              )
-            ]),
+
+          StreamBuilder(
+            stream: widget.user.lists,
+            builder: (context, snapshot) {
+              if(snapshot.hasData){
+                return Container(
+                  width: MediaQuery.of(context).size.width - 40,
+                  height: 400.0,
+                  child:
+                      ListView(scrollDirection: Axis.horizontal, children: <Widget>[
+                    Row(
+                      children: snapshot.data.documents.map<Widget>(
+                        
+                        (DocumentSnapshot lists){
+                          /*List<ListTodo> _listOfTodos  = [];
+                          lists.reference.collection("todos").getDocuments().then((QuerySnapshot snapshot){
+                            snapshot.documents.forEach(
+                              (DocumentSnapshot document){
+                                _listOfTodos.add(
+                                  new ListTodo(isDone: document["isDone"], title: document["title"], details: document["details"])
+                                );
+                              }
+                            );
+                          });*/
+                          
+                          TodoList _newTodoList = TodoList(
+                              listTitle: lists["title"],
+                              backgroundColor: hexToColor(lists["backgroundColor"]) ,
+                              listOfTodos: [],
+                              listOfTodosStream: lists.reference.collection("todos").snapshots()
+                          );
+                          print(_newTodoList.listOfTodos);
+                          return ListWidget(
+                            todoList: _newTodoList,
+                            onTap: () {
+                            _currentTodoListController.sink.add(_newTodoList);
+                            _showBottomSheet();
+                             },
+                          );
+
+                        }
+                      ).toList()
+                    )
+                  ]),
+                );
+              }
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return CircularProgressIndicator();
+              }
+              return(
+                Row(
+                  children: <Widget>[
+                    Text(
+                      "No Lists",
+                      style: TextStyle(
+                        fontFamily: "Poppins"
+                      ),
+                    )
+                  ],
+                )
+              );
+              
+            }
           )
         ]);
   }
 }
+
+
+/*<Widget>[
+                      ListWidget(
+                        todoList: _todoList,
+                        onTap: () {
+                          _currentTodoListController.sink.add(_todoList);
+                          _showBottomSheet();
+                        },
+                      ),
+                      ListWidget(
+                        todoList: _todoList2,
+                        onTap: () {
+                          _currentTodoListController.sink.add(_todoList2);
+                          _showBottomSheet();
+                        },
+                      ),
+                      ListWidget(
+                        todoList: _todoList3,
+                        onTap: () {
+                          _currentTodoListController.sink.add(_todoList3);
+                          _showBottomSheet();
+                        },
+                      ),
+                      ListWidget(
+                        todoList: _todoList,
+                        onTap: () {
+                          _currentTodoListController.sink.add(_todoList);
+                          _showBottomSheet();
+                        },
+                      )
+                    ]*/

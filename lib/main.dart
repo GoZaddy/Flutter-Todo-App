@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/pages/AddNewList.dart';
 import 'package:todo_app/pages/AddQuickNote.dart';
 import 'package:todo_app/pages/Dashboard.dart';
 import 'package:todo_app/pages/Login.dart';
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
             routes: {
               "/": (context) => LoginPage(),
               "/dashboard": (context) => DashboardScreen(),
-              "/addQuickNote": (context) => AddQuickNote()
+              "/addQuickNote": (context) => AddQuickNote(),
+              "/addList": (context) => AddList()
             }, 
           ),
         ),

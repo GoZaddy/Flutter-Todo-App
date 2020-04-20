@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/ListTodo.dart';
+import 'package:todo_app/constants/Constants.dart';
 import 'package:todo_app/models/TodoList.dart';
 import 'package:todo_app/widgets/ColorPickerButton.dart';
 import 'package:todo_app/widgets/ListTodoWidget.dart';
@@ -23,19 +23,9 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
 
   bool _inEditingMode = false;
   TextEditingController _textController = new TextEditingController();
-  List<Color> _listOfColorsForColorPicker = [
-    Color(0xff878CAC),
-    Color(0xff4F5578),
-    Color(0xff657AFF),
-    Color(0xffFFFFFF),
-    Color(0xff3AB9F2),
-    Color(0xff63D2BF),
-    Color(0xffEB70B1)
-  ];
-
+  
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     setState(() {
       _textController.text = widget.todoList.listTitle;
@@ -50,7 +40,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
       height: MediaQuery.of(context).size.height * 0.7,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: widget.todoList.backgroundColor != null ? widget.todoList.backgroundColor : _listOfColorsForColorPicker[0],
+        color: widget.todoList.backgroundColor != null ? widget.todoList.backgroundColor : listOfColorsForColorPicker[0],
         borderRadius: BorderRadius.only(topRight: Radius.circular(50))
       ),
       child: ListView(
@@ -123,7 +113,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: _listOfColorsForColorPicker.map(
+                    children: listOfColorsForColorPicker.map(
                       (color){
                         return ColorPickerButton(
                           isSelectedColor: widget.todoList.backgroundColor == color,
@@ -141,7 +131,8 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                     icon: Icon(
                       Icons.delete,
                       color: Colors.white,
-                    )
+                    ),
+                    onPressed: (){},
                   )
                 ],
               ),
@@ -153,21 +144,26 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
             ],
           ): SizedBox(height: 0.0),
           SizedBox(height: 30.0),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: widget.todoList.listOfTodos.map(
-              (todo){
-                return Container(
-                  
-                  margin: EdgeInsets.only(bottom: 5.0),
-                  child: ListTodoWidget(
-                    checkboxAndTextSpace: 30.0,
-                    todo: todo,
-                    showDetails: true
-                  ),
-                );
-              }
-            ).toList()
+          StreamBuilder<Object>(
+            stream: null,
+            builder: (context, snapshot) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widget.todoList.listOfTodos.map(
+                  (todo){
+                    return Container(
+                      
+                      margin: EdgeInsets.only(bottom: 5.0),
+                      child: ListTodoWidget(
+                        checkboxAndTextSpace: 30.0,
+                        todo: todo,
+                        showDetails: true
+                      ),
+                    );
+                  }
+                ).toList()
+              );
+            }
           ),
           Row(
             children: <Widget>[

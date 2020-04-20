@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/ListTodo.dart';
 import 'package:todo_app/models/TodoList.dart';
@@ -67,14 +68,23 @@ class ListWidget extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(left:30.0, right: 50.0, top: 10.0, bottom: 20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children:todoList.listOfTodos.map((todo){
-                    return ListTodoWidget(
-                      todo: todo,
-                      showDetails: false,
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: todoList.listOfTodosStream,
+                  builder: (context, snapshot) {
+
+                    
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      
+                      children:snapshot.data.documents.map((todo){
+                        todoList.listOfTodos.add(new ListTodo(isDone: todo["isDone"], title: todo["title"], details: todo["details"]));
+                        return ListTodoWidget(
+                          todo: new ListTodo(isDone: todo["isDone"], title: todo["title"], details: todo["details"]),
+                          showDetails: false,
+                        );
+                      }).toList(),
                     );
-                  }).toList(),
+                  }
                 ),
               )
             ],

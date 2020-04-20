@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:random_words/random_words.dart';
 import 'package:todo_app/models/Priority.dart';
-import 'package:todo_app/models/QuickNote.dart';
 import 'package:todo_app/models/User.dart';
 import 'package:todo_app/widgets/SelectPriorityButton.dart';
 import 'package:todo_app/widgets/SmallButton.dart';
@@ -54,6 +53,7 @@ class _AddQuickNoteState extends State<AddQuickNote> {
       print(_quickNoteTitle);
     });
     return Scaffold(
+      backgroundColor: Colors.white,
       body: ListView(
         children: <Widget>[
           Padding(

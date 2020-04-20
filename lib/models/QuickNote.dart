@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/Priority.dart';
-import 'package:todo_app/models/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QuickNote{
@@ -9,7 +8,6 @@ class QuickNote{
   bool isDone;
   String title;
 
-  final Firestore _db = Firestore.instance;
 
   QuickNote({
     @required this.priority,

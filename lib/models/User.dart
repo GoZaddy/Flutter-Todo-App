@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:todo_app/models/ListTodo.dart';
 
 class User {
   String uid;
@@ -26,8 +28,42 @@ class User {
       'isDone': quickNoteData['isDone']
     });
   }
+
+  void addList(String listTitle, List<ListTodo> listOfTodos, String listBackgroundColor){
+    _db.collection("lists").document(uid).collection("userLists").add({
+      "title": listTitle,
+      "backgroundColor": listBackgroundColor.toString()
+    }).then((DocumentReference doc){
+      listOfTodos.forEach((ListTodo todo){
+          doc.collection("todos").add({
+            "isDone": todo.isDone,
+            "title": todo.title,
+            "details": todo.details
+          });
+      });
+    });
+
+  }
   Stream<QuerySnapshot> get lists{
     return _db.collection("lists").document(uid).collection("userLists").snapshots();
+  }
+
+  Stream<QuerySnapshot> getListTodos(String docId){
+    List<ListTodo> _listOfTodos = [];
+     return _db.collection("lists").document(uid).collection("userLists").document(docId).collection("todos").snapshots();
+     
+     /*getDocuments().then((QuerySnapshot snapshot){
+       snapshot.documents.forEach(
+         (DocumentSnapshot document){
+           _listOfTodos.add(
+             new ListTodo(isDone: document["isDone"], title: document["title"], details: document["details"])
+           );
+         }
+       );
+     });
+
+
+     return _listOfTodos;*/
   }
 
   void updateList(){
