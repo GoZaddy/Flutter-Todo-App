@@ -90,11 +90,10 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                     ),
                     controller: _textController,
                     decoration: InputDecoration(
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0x80ffffff),
-                          width: 2.0
-                        )
+                      border: InputBorder.none,
+                      hintText: "List title",
+                      hintStyle: TextStyle(
+                        color: Color(0x80ffffff)
                       )
                     ),
                   ),
