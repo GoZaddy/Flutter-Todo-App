@@ -121,7 +121,8 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                             }
                           );
                         _quickNoteTitle = "";
-                        _quickNotePriority = null;
+                        _textController.text = "";
+                        _quickNotePriority = Priority.fromPriorityValue(3);
                       },
                     )
                   ],

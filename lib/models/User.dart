@@ -15,7 +15,7 @@ class User {
   }
 
   Stream<QuerySnapshot> get quickNotes{
-   return _db.collection("quickNotes").document(uid).collection("userNotes").snapshots();
+   return _db.collection("quickNotes").document(uid).collection("userNotes").orderBy("priority").snapshots();
   }
 
 
@@ -26,16 +26,8 @@ class User {
       'isDone': quickNoteData['isDone']
     });
   }
-  void updateQuickNotes(){
-
-  }
-
-  void getLists(){
-    _db.collection("lists").document(uid).collection("userLists").snapshots().listen(
-      (snapshot){
-        return snapshot.documents;
-      }
-    );
+  Stream<QuerySnapshot> get lists{
+    return _db.collection("lists").document(uid).collection("userLists").snapshots();
   }
 
   void updateList(){

@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/Priority.dart';
+import 'package:todo_app/models/User.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QuickNote{
-  String id;
+  DocumentReference documentPath;
   Priority priority;
   bool isDone;
   String title;
+
+  final Firestore _db = Firestore.instance;
 
   QuickNote({
     @required this.priority,
     @required this.isDone,
     @required this.title,
-    this.id
+    this.documentPath
   });
 
 //do a from doucment named constructor
@@ -19,8 +23,10 @@ class QuickNote{
   set itemPriority(Priority newPriority){
     this.priority = newPriority;
   } 
-  void setItemIsDone(bool isDone){
-    
+  void setItemIsDone(){
+    this.documentPath.updateData({
+      'isDone': isDone
+    });
   }
   set itemTitle(String title){
     this.title = title;

@@ -5,7 +5,7 @@ class QuickNoteWidget extends StatefulWidget {
   final QuickNote quickNoteInfo;
   QuickNoteWidget(
      this.quickNoteInfo
-    );
+  );
   @override
   _QuickNoteWidgetState createState() => _QuickNoteWidgetState();
 }
@@ -22,9 +22,11 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
       margin: EdgeInsets.only(bottom: 15.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //crossAxisAlignment: CrossAxisAlignment.start,
         
         children: <Widget>[
           Row(
+            //crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
                 width: 18,
@@ -35,24 +37,29 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
                   activeColor: Color(0x80878CAC),
                   checkColor: Colors.white,
                   onChanged: (bool isChecked){
-                    //print(_isDone);
+                    
                     setState(() {
-                      quickNoteInfo.isDone = isChecked;
+                      this.widget.quickNoteInfo.isDone = isChecked;
                     });
-                    //print(_isDone);
+                    quickNoteInfo.setItemIsDone();
+                    
+                    
                     
                   },
                   
                 ),
               ),
               SizedBox(width: 30.0),
-              Text(
-                quickNoteInfo.title,
-                style: TextStyle(
-                  fontSize: 18.0,
-                  decoration: quickNoteInfo.isDone ? TextDecoration.lineThrough : TextDecoration.none,
-                  color: quickNoteInfo.isDone? Color(0x4D878CAC) :Color(0xff878CAC),
-                  fontFamily: "Poppins"
+              Container(
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Text(
+                  quickNoteInfo.title,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    decoration: quickNoteInfo.isDone ? TextDecoration.lineThrough : TextDecoration.none,
+                    color: quickNoteInfo.isDone? Color(0x4D878CAC) :Color(0xff878CAC),
+                    fontFamily: "Poppins"
+                  ),
                 ),
               )
               

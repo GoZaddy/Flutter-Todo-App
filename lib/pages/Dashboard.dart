@@ -284,16 +284,15 @@ class _DashboardState extends State<Dashboard> {
             stream: widget.user.quickNotes,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                if(snapshot.data.documents.length == 0){
+                if (snapshot.data.documents.length == 0) {
                   return Text(
                     "No Quick Notes available",
-                    style: TextStyle(
-                      fontFamily: "Poppins"
-                    ),
+                    style: TextStyle(fontFamily: "Poppins"),
                   );
                 }
-                  
+
                 return (Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
                   child: ListView(
                       shrinkWrap: true,
                       padding: EdgeInsets.all(0),
@@ -304,7 +303,11 @@ class _DashboardState extends State<Dashboard> {
                                 document["priority"]),
                             isDone: document["isDone"],
                             title: document["title"],
-                            id: document.documentID));
+                            documentPath: Firestore.instance
+                                .collection("quickNotes")
+                                .document(widget.user.uid)
+                                .collection("userNotes")
+                                .document(document.documentID)));
                       }).toList()),
                 ));
               }
