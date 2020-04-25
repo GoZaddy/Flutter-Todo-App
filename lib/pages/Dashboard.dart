@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,37 +17,10 @@ import 'package:todo_app/models/ListTodo.dart';
 import 'package:todo_app/models/TodoList.dart';
 import 'package:todo_app/widgets/SmallButton.dart';
 
-List<ListTodo> _aListofListTodos = [
-  ListTodo(
-      title: "3 sets push-ups",
-      isDone: false,
-      details:
-          "Alternate exercises in different variations, 3 sets, 10 reps each with a 1 minute break."),
-  ListTodo(title: "3 sets push-ups", isDone: false, details: ""),
-  ListTodo(title: "3 sets push-ups", isDone: true, details: ""),
-  ListTodo(title: "3 sets push-ups", isDone: false, details: ""),
-  ListTodo(title: "3 sets push-ups", isDone: true, details: ""),
-  ListTodo(title: "3 sets push-ups", isDone: false, details: "")
-];
 
-TodoList _todoList = TodoList(
-    backgroundColor: Color(0xff657AFF),
-    listTitle: "Workout",
-    listOfTodos: _aListofListTodos);
-
-TodoList _todoList2 = TodoList(
-    backgroundColor: Color(0xff4F5578),
-    listTitle: "Shopping",
-    listOfTodos: _aListofListTodos);
-
-TodoList _todoList3 = TodoList(
-    backgroundColor: Color(0xff3AB9F2),
-    listTitle: "Workout",
-    listOfTodos: _aListofListTodos);
 
 class DashboardScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  VoidCallback _openBlankTodoBottomSheet;
   @override
   Widget build(BuildContext context) {
     User currentUser = Provider.of<User>(context);
@@ -56,7 +29,7 @@ class DashboardScreen extends StatelessWidget {
       child: Scaffold(
         key: _scaffoldKey,
         body: currentUser.exists
-            ? Dashboard(currentUser, _scaffoldKey, _openBlankTodoBottomSheet)
+            ? Dashboard(currentUser, _scaffoldKey)
             : Center(child: CircularProgressIndicator()),
         endDrawer: Container(
           padding:
@@ -157,6 +130,7 @@ class DashboardScreen extends StatelessWidget {
                             onPressed: () {
                               authService.signOut();
                               Navigator.pop(context);
+                              Navigator.popAndPushNamed(context, "/");
                             },
                           )
                         ],
@@ -176,13 +150,10 @@ class DashboardScreen extends StatelessWidget {
 class Dashboard extends StatefulWidget {
   GlobalKey<ScaffoldState> scaffoldKey;
   dynamic user;
-  VoidCallback openBlankTodoBottomSheet;
 
-  Dashboard(dynamic user, GlobalKey<ScaffoldState> scaffoldKey,
-      VoidCallback openBlankTodoBottomSheet) {
+  Dashboard(dynamic user, GlobalKey<ScaffoldState> scaffoldKey) {
     this.user = user;
     this.scaffoldKey = scaffoldKey;
-    this.openBlankTodoBottomSheet = openBlankTodoBottomSheet;
   }
 
   @override
@@ -226,11 +197,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    widget.openBlankTodoBottomSheet = () {
-      _currentTodoListController.sink
-          .add(TodoList(listTitle: "", listOfTodos: []));
-      _showBottomSheet();
-    };
+    
     return ListView(
         padding:
             EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0, bottom: 20.0),
@@ -246,7 +213,7 @@ class _DashboardState extends State<Dashboard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                'Hello ${this.widget.user.displayName}',
+                'Hello ${this.widget.user.displayName.toString().split(" ")[0]}',
                 style: TextStyle(
                     fontSize: 32.0,
                     fontFamily: "Poppins",
@@ -286,29 +253,41 @@ class _DashboardState extends State<Dashboard> {
                 if (snapshot.data.documents.length == 0) {
                   return Text(
                     "No Quick Notes available",
-                    style: TextStyle(fontFamily: "Poppins"),
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 18.0,
+                      color: Theme.of(context).accentColor
+                    ),
                   );
                 }
-
-                return (Container(
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  child: ListView(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.all(0),
-                      children: snapshot.data.documents
-                          .map<Widget>((DocumentSnapshot document) {
-                        return QuickNoteWidget(new QuickNote(
-                            priority: Priority.fromPriorityValue(
-                                document["priority"]),
-                            isDone: document["isDone"],
-                            title: document["title"],
-                            documentPath: Firestore.instance
-                                .collection("quickNotes")
-                                .document(widget.user.uid)
-                                .collection("userNotes")
-                                .document(document.documentID)));
-                      }).toList()),
-                ));
+                return Column(
+                  children: <Widget>[
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: 150,
+                        maxHeight: MediaQuery.of(context).size.height * 0.4,
+                      ),
+                      child: (ListView(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.all(0),
+                          children: snapshot.data.documents
+                              .map<Widget>((DocumentSnapshot document) {
+                            return QuickNoteWidget(new QuickNote(
+                                priority: Priority.fromPriorityValue(
+                                    document["priority"]),
+                                isDone: document["isDone"],
+                                title: document["title"],
+                                documentPath: Firestore.instance
+                                    .collection("quickNotes")
+                                    .document(widget.user.uid)
+                                    .collection("userNotes")
+                                    .document(document.documentID)));
+                          }).toList())),
+                    ),
+                    SizedBox(height: 30.0),
+                          
+                  ],
+                );
               }
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Row(
@@ -317,8 +296,6 @@ class _DashboardState extends State<Dashboard> {
                     (CircularProgressIndicator()),
                   ],
                 );
-              } else {
-                return Text("No Quick Notes available");
               }
             },
           ),
@@ -339,34 +316,41 @@ class _DashboardState extends State<Dashboard> {
           ),
           SizedBox(height: 30.0),
 
-          StreamBuilder(
-            stream: widget.user.lists,
+          StreamBuilder<QuerySnapshot>(
+            stream: widget.user.lists.asBroadcastStream(),
             builder: (context, snapshot) {
               if(snapshot.hasData){
+                if(snapshot.data.documents.length== 0){
+                  return(
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "No Lists available",
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 18.0,
+                            color: Theme.of(context).accentColor
+                          ),
+                        )
+                      ],
+                    )
+                  );
+                }
                 return Container(
                   width: MediaQuery.of(context).size.width - 40,
-                  height: 400.0,
+                  height: 500.0,
                   child:
                       ListView(scrollDirection: Axis.horizontal, children: <Widget>[
                     Row(
                       children: snapshot.data.documents.map<Widget>(
                         
                         (DocumentSnapshot lists){
-                          /*List<ListTodo> _listOfTodos  = [];
-                          lists.reference.collection("todos").getDocuments().then((QuerySnapshot snapshot){
-                            snapshot.documents.forEach(
-                              (DocumentSnapshot document){
-                                _listOfTodos.add(
-                                  new ListTodo(isDone: document["isDone"], title: document["title"], details: document["details"])
-                                );
-                              }
-                            );
-                          });*/
                           
                           TodoList _newTodoList = TodoList(
                               listTitle: lists["title"],
                               backgroundColor: hexToColor(lists["backgroundColor"]) ,
                               listOfTodos: [],
+                              listId: lists.documentID,
                               listOfTodosStream: lists.reference.collection("todos").snapshots()
                           );
                           print(_newTodoList.listOfTodos);
@@ -385,20 +369,18 @@ class _DashboardState extends State<Dashboard> {
                 );
               }
               if(snapshot.connectionState == ConnectionState.waiting){
-                return CircularProgressIndicator();
-              }
-              return(
-                Row(
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      "No Lists",
-                      style: TextStyle(
-                        fontFamily: "Poppins"
-                      ),
-                    )
+                    Container(
+                      height: 100,
+                      width: 100,
+                      child: CircularProgressIndicator()
+                    ),
                   ],
-                )
-              );
+                );
+              }
+              
               
             }
           )
@@ -407,33 +389,3 @@ class _DashboardState extends State<Dashboard> {
 }
 
 
-/*<Widget>[
-                      ListWidget(
-                        todoList: _todoList,
-                        onTap: () {
-                          _currentTodoListController.sink.add(_todoList);
-                          _showBottomSheet();
-                        },
-                      ),
-                      ListWidget(
-                        todoList: _todoList2,
-                        onTap: () {
-                          _currentTodoListController.sink.add(_todoList2);
-                          _showBottomSheet();
-                        },
-                      ),
-                      ListWidget(
-                        todoList: _todoList3,
-                        onTap: () {
-                          _currentTodoListController.sink.add(_todoList3);
-                          _showBottomSheet();
-                        },
-                      ),
-                      ListWidget(
-                        todoList: _todoList,
-                        onTap: () {
-                          _currentTodoListController.sink.add(_todoList);
-                          _showBottomSheet();
-                        },
-                      )
-                    ]*/

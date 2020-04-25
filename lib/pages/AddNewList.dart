@@ -14,14 +14,15 @@ class AddList extends StatefulWidget {
 
 class _AddListState extends State<AddList> {
 
-  Color _selectedColor;
+  Color _selectedColor = listOfColorsForColorPicker[2];
   List<ListTodo> _listOfTodos = [];
   String _listTitle;
   TextEditingController _newTodoController = new TextEditingController();
+  TextEditingController _titleController = new TextEditingController();
    GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-   
-  
 
+   
+   
   @override
   Widget build(BuildContext context) {
     FormState _form = _formKey.currentState;
@@ -62,8 +63,12 @@ class _AddListState extends State<AddList> {
                   children: <Widget>[
                     Expanded(
                       child: TextFormField(
+                        controller: _titleController,
                         validator: (val) => val == ""? "Title must be valid" : null,
-                        onSaved: (val) =>  _listTitle = val,
+                        onSaved: (val){
+                          _listTitle = val;
+                          val = "";
+                        } ,
                         style: TextStyle(
                           fontSize: 27.0,
                           fontFamily: "Poppins",
@@ -85,6 +90,22 @@ class _AddListState extends State<AddList> {
                         if(_form.validate()){
                           _form.save();
                           _currentUser.addList(_listTitle, _listOfTodos, "#${_selectedColor.toString().substring(10,16)}");
+                          
+                          showDialog(
+                            context: context,
+                            builder: (context){
+                              return AlertDialog(
+                                title: Text("New List added"),
+                              );
+                            }
+                          ).then((value){
+                            setState(() {
+                              _titleController.text = "";
+                              _listOfTodos.clear();
+                            });
+                          });
+
+                          
                         }
 
                       }   
@@ -194,8 +215,10 @@ class _AddListState extends State<AddList> {
                       _listOfTodos.add(
                       new ListTodo(isDone: false, title: _newTodoController.text, details: "")
                     );
+                    print(_listOfTodos[0].title);
                     _newTodoController.text = "";
                     });
+                    
                     
                   },
                   child: Container(

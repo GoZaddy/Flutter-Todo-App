@@ -49,13 +49,16 @@ class ListWidget extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      todoList.listTitle,
-                      style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white
+                    Container(
+                      width: 100.0,
+                      child: Text(
+                        todoList.listTitle,
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),
                       ),
                     ),
                   ],
@@ -71,19 +74,45 @@ class ListWidget extends StatelessWidget {
                 child: StreamBuilder<QuerySnapshot>(
                   stream: todoList.listOfTodosStream,
                   builder: (context, snapshot) {
-
-                    
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    int _length = snapshot.data.documents.length;
+                    if(snapshot.hasData){
+                      return Column(
                       
-                      children:snapshot.data.documents.map((todo){
-                        todoList.listOfTodos.add(new ListTodo(isDone: todo["isDone"], title: todo["title"], details: todo["details"]));
-                        return ListTodoWidget(
-                          todo: new ListTodo(isDone: todo["isDone"], title: todo["title"], details: todo["details"]),
-                          showDetails: false,
-                        );
-                      }).toList(),
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children:snapshot.data.documents.take(4).map((todo){                       
+                            return ListTodoWidget(
+                              todo: new ListTodo(isDone: todo["isDone"], title: todo["title"], details: todo["details"], todoId: todo.documentID, listId: todoList.listId),
+                              showDetails: false,
+                            );
+                          }).toList(),
+                        ),
+                        
+                        _length > 4 ? 
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              "...",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30.0,
+                                fontFamily: "Poppins",
+                                letterSpacing: 10
+                              ),
+                            ),
+                          ],
+                        ) : SizedBox(height: 0)
+
+                      ],
                     );
+                    }
+                    if(snapshot.connectionState == ConnectionState.waiting){
+                      return CircularProgressIndicator();
+                    }
+                    return SizedBox(height: 0);
+                    
                   }
                 ),
               )
