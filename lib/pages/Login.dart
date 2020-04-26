@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/models/User.dart';
+import 'package:todo_app/pages/Dashboard.dart';
 import 'package:todo_app/services/AuthService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -11,6 +13,8 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthService authService = Provider.of<AuthService>(context);
+    User _currentUser = Provider.of<User>(context);
+    
     Widget _buildProgressIndicator (){
     return StreamBuilder(
       initialData: false,
@@ -26,7 +30,7 @@ class LoginPage extends StatelessWidget {
     );
     
   }
-    return Scaffold(
+    return _currentUser != null? DashboardScreen(): Scaffold(
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

@@ -74,8 +74,9 @@ class ListWidget extends StatelessWidget {
                 child: StreamBuilder<QuerySnapshot>(
                   stream: todoList.listOfTodosStream,
                   builder: (context, snapshot) {
-                    int _length = snapshot.data.documents.length;
+                    
                     if(snapshot.hasData){
+                      int _length = snapshot.data.documents.length;
                       return Column(
                       
                       children: <Widget>[

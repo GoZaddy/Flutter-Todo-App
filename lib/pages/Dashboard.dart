@@ -28,7 +28,7 @@ class DashboardScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
-        body: currentUser.exists
+        body: currentUser != null
             ? Dashboard(currentUser, _scaffoldKey)
             : Center(child: CircularProgressIndicator()),
         endDrawer: Container(
@@ -264,25 +264,27 @@ class _DashboardState extends State<Dashboard> {
                   children: <Widget>[
                     ConstrainedBox(
                       constraints: BoxConstraints(
-                        minHeight: 150,
+                        minHeight: 100,
                         maxHeight: MediaQuery.of(context).size.height * 0.4,
                       ),
-                      child: (ListView(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.all(0),
-                          children: snapshot.data.documents
-                              .map<Widget>((DocumentSnapshot document) {
-                            return QuickNoteWidget(new QuickNote(
-                                priority: Priority.fromPriorityValue(
-                                    document["priority"]),
-                                isDone: document["isDone"],
-                                title: document["title"],
-                                documentPath: Firestore.instance
-                                    .collection("quickNotes")
-                                    .document(widget.user.uid)
-                                    .collection("userNotes")
-                                    .document(document.documentID)));
-                          }).toList())),
+                      child: Form(
+                          child: (ListView(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.all(0),
+                            children: snapshot.data.documents
+                                .map<Widget>((DocumentSnapshot document) {
+                              return QuickNoteWidget(new QuickNote(
+                                  priority: Priority.fromPriorityValue(
+                                      document["priority"]),
+                                  isDone: document["isDone"],
+                                  title: document["title"],
+                                  documentPath: Firestore.instance
+                                      .collection("quickNotes")
+                                      .document(widget.user.uid)
+                                      .collection("userNotes")
+                                      .document(document.documentID)));
+                            }).toList())),
+                      ),
                     ),
                     SizedBox(height: 30.0),
                           

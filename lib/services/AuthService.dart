@@ -15,6 +15,7 @@ class AuthService {
   //constructor
   AuthService() {
     user = _auth.onAuthStateChanged;
+    
 
     profile = user.switchMap((FirebaseUser user) {
       if (user != null) {

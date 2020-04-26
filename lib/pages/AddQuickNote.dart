@@ -23,14 +23,14 @@ class _AddQuickNoteState extends State<AddQuickNote> {
 
   TextEditingController _textController =  new TextEditingController();
 
-  Iterable<String> _suggestions = [...adjectives.take(10), ...nouns.take(5)];
+  Iterable<String> _suggestions = [...adjectives.take(7), ...nouns.take(8)];
 
   @override
   void initState() {
     super.initState();
     _suggestionsTextController.stream.listen(
       (String suggestion){
-        _textController.text = _textController.text + suggestion;
+        _textController.value = _textController.value.copyWith(text:_textController.text + suggestion);
       }
     );
   }
@@ -50,7 +50,7 @@ class _AddQuickNoteState extends State<AddQuickNote> {
 
     _textController.addListener((){
       _quickNoteTitle = _textController.text;
-      print(_quickNoteTitle);
+      
     });
     return Scaffold(
       backgroundColor: Colors.white,
@@ -94,9 +94,9 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                             color: Theme.of(context).accentColor),
                         decoration: InputDecoration(
                             hintText: "Write your quick note",
-                            border:
-                                UnderlineInputBorder(borderSide: BorderSide.none)),
+                            border:InputBorder.none,
                       ),
+                    ),
                     ),
                     SizedBox(width:20.0),
                     SmallButton(
@@ -119,13 +119,16 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                                 title: Text("New Quick note added"),
                               );
                             }
-                          );
-                        _quickNoteTitle = "";
-                        _textController.text = "";
-                        setState(() {
-                          _selectedPriorityValue = 3;
-                        });
-                        _quickNotePriority = Priority.fromPriorityValue(3);
+                          ).then((value){
+                            _suggestionsTextController.sink.add("");
+                            _quickNoteTitle = "";
+                            _textController.text = "";
+                            setState(() {
+                              _selectedPriorityValue = 3;
+                            });
+                            _quickNotePriority = Priority.fromPriorityValue(3);
+                          });
+                        
                       },
                     )
                   ],
