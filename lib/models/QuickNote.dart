@@ -16,8 +16,7 @@ class QuickNote{
     this.documentPath
   });
 
-//do a from doucment named constructor
- 
+
   set itemPriority(Priority newPriority){
     this.priority = newPriority;
   } 
@@ -25,6 +24,16 @@ class QuickNote{
     this.documentPath.updateData({
       'isDone': isDone
     });
+  }
+
+  void setItemTitle(String newTitle){
+    this.documentPath.updateData({
+      'title': newTitle
+    });
+  }
+
+  void delete(){
+    this.documentPath.delete();
   }
   set itemTitle(String title){
     this.title = title;

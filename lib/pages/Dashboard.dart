@@ -208,7 +208,7 @@ class _DashboardState extends State<Dashboard> {
             elevation: 0.0,
             backgroundColor: Colors.transparent,
           ),
-          //SizedBox(height:10.0),
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -373,8 +373,8 @@ class _DashboardState extends State<Dashboard> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      height: 100,
-                      width: 100,
+                      height: 40,
+                      width: 40,
                       child: CircularProgressIndicator()
                     ),
                   ],

@@ -19,7 +19,7 @@ class _AddQuickNoteState extends State<AddQuickNote> {
   StreamController<String> _suggestionsTextController = new StreamController<String>();
   Priority _quickNotePriority = Priority.fromPriorityValue(3);
   List<int> _priorityValues = [1,2,3];
-  int _selectedPriorityValue;
+  int _selectedPriorityValue = 3;
 
   TextEditingController _textController =  new TextEditingController();
 
@@ -122,6 +122,9 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                           );
                         _quickNoteTitle = "";
                         _textController.text = "";
+                        setState(() {
+                          _selectedPriorityValue = 3;
+                        });
                         _quickNotePriority = Priority.fromPriorityValue(3);
                       },
                     )
