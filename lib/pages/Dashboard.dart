@@ -28,10 +28,7 @@ class DashboardScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
-        body: 
-             Dashboard(currentUser, _scaffoldKey)
-             
-           ,
+        body: Dashboard(currentUser, _scaffoldKey),
         endDrawer: Container(
           padding:
               EdgeInsets.only(left: 20.0, right: 20.0, top: 40.0, bottom: 20.0),
@@ -152,7 +149,7 @@ class DashboardScreen extends StatelessWidget {
 
 class Dashboard extends StatefulWidget {
   GlobalKey<ScaffoldState> scaffoldKey;
-  dynamic user;
+  User user;
 
   Dashboard(dynamic user, GlobalKey<ScaffoldState> scaffoldKey) {
     this.user = user;
@@ -283,11 +280,7 @@ class _DashboardState extends State<Dashboard> {
                                       document["priority"]),
                                   isDone: document["isDone"],
                                   title: document["title"],
-                                  documentPath: Firestore.instance
-                                      .collection("quickNotes")
-                                      .document(widget.user.uid)
-                                      .collection("userNotes")
-                                      .document(document.documentID)));
+                                  documentPath: document.reference));
                             }).toList())),
                       ),
                     ),

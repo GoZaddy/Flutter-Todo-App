@@ -14,7 +14,7 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
   @override
   void initState() {
     super.initState();
-   
+   print(widget.quickNoteInfo.documentPath);
   }
 
   @override
@@ -26,6 +26,7 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
 
  
   void _showModalToEditTitle(){
+    _quickNoteTitleController = TextEditingController(text: widget.quickNoteInfo.title);
     showDialog(
       context: context,
       builder: (context){
@@ -37,7 +38,7 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
           child: Container(
            height: 200,
            
-            padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: EdgeInsets.symmetric(horizontal: 30),
             color: Colors.white,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -45,18 +46,16 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.6 - 30,
-                      child: TextField(
-                        controller: _quickNoteTitleController,
-                        decoration: InputDecoration(
+                    Expanded(
+                      child: Container(                      
+                        child: TextField(
+                          controller: _quickNoteTitleController, 
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color:  Color(0xff878CAC),
+                            fontFamily: "Poppins"
+                          ),
                         ),
-                        style: TextStyle(
-                        fontSize: 18.0,
-                        
-                        
-                        color:  Color(0xff878CAC),
-                        fontFamily: "Poppins"),
                       ),
                     ),
                     SizedBox(width: 20),
@@ -66,11 +65,10 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
                         Icons.check,
                         color: Colors.white,
                       ),
-                      onPressed: (){
+                      onPressed: () {
                         widget.quickNoteInfo.setItemTitle(_quickNoteTitleController.text);
-                        Navigator.of(context, rootNavigator: true).pop();
-                        _quickNoteTitleController.clear();
-                        _quickNoteTitleController.dispose();
+                        Navigator.of(context).pop();
+                        
                       },
                     )
                   ],
@@ -85,7 +83,7 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
   @override
   Widget build(BuildContext context) {
      
-    _quickNoteTitleController = TextEditingController(text: widget.quickNoteInfo.title);
+    
     return InkWell(
       onLongPress: (){
         _showModalToEditTitle();
