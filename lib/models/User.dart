@@ -5,14 +5,24 @@ import 'package:todo_app/models/ListTodo.dart';
 class User {
   String uid;
   String displayName;
-  bool exists = false;
+  bool exists;
 
   final Firestore _db = Firestore.instance;
+  User({
+    this.uid,
+    this.displayName,
+    this.exists
+  });
 
-  User.fromUid(FirebaseUser user) {
-    this.uid = user.uid;
-    this.displayName = user.displayName;
-    this.exists = true;
+  
+  User.fromUid(FirebaseUser user){
+    
+    
+    
+      this.uid = user.uid;
+      this.displayName = user.displayName;
+      this.exists = true;
+    
   }
 
   Stream<QuerySnapshot> get quickNotes {

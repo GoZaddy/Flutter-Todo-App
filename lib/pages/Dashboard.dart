@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +12,6 @@ import 'package:todo_app/widgets/ListWidget.dart';
 import 'package:todo_app/widgets/MenuIcon.dart';
 import 'package:todo_app/widgets/QuickNoteWidget.dart';
 
-import 'package:todo_app/models/ListTodo.dart';
 import 'package:todo_app/models/TodoList.dart';
 import 'package:todo_app/widgets/SmallButton.dart';
 
@@ -23,14 +21,17 @@ class DashboardScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
-    User currentUser = Provider.of<User>(context);
-    AuthService authService = Provider.of<AuthService>(context);
+
+    final currentUser = Provider.of<User>(context);
+    
+    
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
-        body: currentUser != null
-            ? Dashboard(currentUser, _scaffoldKey)
-            : Center(child: CircularProgressIndicator()),
+        body: 
+             Dashboard(currentUser, _scaffoldKey)
+             
+           ,
         endDrawer: Container(
           padding:
               EdgeInsets.only(left: 20.0, right: 20.0, top: 40.0, bottom: 20.0),
@@ -127,10 +128,12 @@ class DashboardScreen extends StatelessWidget {
                               Icons.exit_to_app,
                               color: Colors.white,
                             ),
-                            onPressed: () {
-                              authService.signOut();
-                              Navigator.pop(context);
-                              Navigator.popAndPushNamed(context, "/");
+                            onPressed: () async{
+                              await AuthService().signOut();
+                               print(currentUser);
+                               
+                               Navigator.of(context).pop();
+                             
                             },
                           )
                         ],
@@ -168,10 +171,12 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void initState() {
+    
     super.initState();
     _currentTodoListController.stream.listen((TodoList todo) {
       _currentTodoList = todo;
     });
+    
   }
 
   @override

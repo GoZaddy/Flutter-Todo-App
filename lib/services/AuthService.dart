@@ -2,22 +2,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:todo_app/models/User.dart';
 
 class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
 
-  Stream<FirebaseUser> user; //firebase user
+  
   Stream<Map<String, dynamic>> profile; //custom user data in firestore
   PublishSubject loading = PublishSubject();
+  
+  User getUserFromFirebaseUser(FirebaseUser user){
+    return user != null ? User.fromUid(user): null;
+  }
 
-  //constructor
+  Stream<User> get user{
+    return _auth.onAuthStateChanged.map(getUserFromFirebaseUser);
+  } 
+
   AuthService() {
-    user = _auth.onAuthStateChanged;
     
-
-    profile = user.switchMap((FirebaseUser user) {
+    profile = _auth.onAuthStateChanged.switchMap((FirebaseUser user) {
       if (user != null) {
         return _db
             .collection("users")
@@ -37,9 +43,11 @@ class AuthService {
     AuthResult result = await _auth.signInWithCredential(GoogleAuthProvider.getCredential(
         idToken: googleAuth.idToken, accessToken: googleAuth.accessToken)
     );
+    
     FirebaseUser user =  result.user;
+    
     updateUserData(user); 
-    print("signed in " + user.displayName);
+    
     loading.add(false);
     return user;
     
@@ -57,8 +65,14 @@ class AuthService {
     }, merge: true);
   }
 
-  void signOut() {
-    _auth.signOut();
+  Future signOut() async{
+    try{
+      return await _auth.signOut();
+    }
+    catch(e){
+      print(e.toString());
+    }
+    
   }
 }
 
