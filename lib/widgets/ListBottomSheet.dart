@@ -28,7 +28,6 @@ class ListBottomSheet extends StatefulWidget {
 class _ListBottomSheetState extends State<ListBottomSheet> {
 
   bool _inEditingMode = false;
-  bool _isTextFieldEnabled = false;
   TextEditingController _todoTitleController = new TextEditingController();
   TextEditingController _newTodoController = new TextEditingController();
   
@@ -61,7 +60,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
     
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+      padding: EdgeInsets.only(left: 40, right:40, top: 15, bottom: 35),
       height: MediaQuery.of(context).size.height * 0.7,
       width: double.infinity,
       decoration: BoxDecoration(
@@ -228,6 +227,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                       margin: EdgeInsets.only(bottom: 5.0),
                       width: double.infinity,
                       child: ListTodoWidget(
+                        enableAddingDetails: _inEditingMode,
                         checkboxAndTextSpace: 30.0,
                         todo: new ListTodo(isDone: todo["isDone"], title: todo["title"], details: todo["details"], todoId: todo.documentID, listId: widget.todoList.listId),
                         showDetails: true

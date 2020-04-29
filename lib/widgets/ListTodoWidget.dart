@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/models/ListTodo.dart';
 import 'package:todo_app/models/User.dart';
+import 'package:todo_app/widgets/NoWidget.dart';
 
 class ListTodoWidget extends StatefulWidget {
   ListTodo todo;
   final bool showDetails;
   final double checkboxAndTextSpace;
+  final bool enableAddingDetails;
 
   ListTodoWidget({
     this.todo,
     this.showDetails,
-    this.checkboxAndTextSpace
+    this.checkboxAndTextSpace,
+    this.enableAddingDetails = false
   });
   @override
   _ListTodoWidgetState createState() => _ListTodoWidgetState();
@@ -81,13 +84,22 @@ class _ListTodoWidgetState extends State<ListTodoWidget> {
                       fontWeight: FontWeight.w200
                     ),
                   ),
-                ): SizedBox(height: 0.0)
+                ): NoWidget()
 
               ],
             ),
-          )
+          ),
+          widget.enableAddingDetails ? IconButton(
+            icon: Icon(
+              Icons.add,
+              color: Colors.white
+            ),
+            onPressed: (){
+              
+            }
+          ): NoWidget()
         ],
-      )
+      ),
     );
   }
 }
