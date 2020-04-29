@@ -9,8 +9,9 @@ class QuickNoteWidget extends StatefulWidget {
   _QuickNoteWidgetState createState() => _QuickNoteWidgetState();
 }
 
+
 class _QuickNoteWidgetState extends State<QuickNoteWidget> {
-  TextEditingController _quickNoteTitleController;  
+  TextEditingController _quickNoteTitleController = new TextEditingController(); 
   @override
   void initState() {
     super.initState();

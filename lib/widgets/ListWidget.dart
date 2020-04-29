@@ -22,6 +22,7 @@ class ListWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.fromLTRB(0.0, 0.0, 40.0, 0.0),
+        height: 600,
         width: 250.0,
         
         decoration: BoxDecoration(
@@ -69,52 +70,54 @@ class ListWidget extends StatelessWidget {
                 width: 250,
                 color: Color(0x33ffffff),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left:30.0, right: 50.0, top: 10.0, bottom: 20.0),
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: todoList.listOfTodosStream,
-                  builder: (context, snapshot) {
-                    
-                    if(snapshot.hasData){
-                      int _length = snapshot.data.documents.length;
-                      return Column(
+              Expanded(
+                              child: Padding(
+                  padding: const EdgeInsets.only(left:30.0, right: 50.0, top: 10.0, bottom: 20.0),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: todoList.listOfTodosStream,
+                    builder: (context, snapshot) {
                       
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children:snapshot.data.documents.take(4).map((todo){                       
-                            return ListTodoWidget(
-                              todo: new ListTodo(isDone: todo["isDone"], title: todo["title"], details: todo["details"], todoId: todo.documentID, listId: todoList.listId),
-                              showDetails: false,
-                            );
-                          }).toList(),
-                        ),
+                      if(snapshot.hasData){
+                        int _length = snapshot.data.documents.length;
+                        return Column(
                         
-                        _length > 4 ? 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              "...",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30.0,
-                                fontFamily: "Poppins",
-                                letterSpacing: 10
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:snapshot.data.documents.take(4).map((todo){                       
+                              return ListTodoWidget(
+                                todo: new ListTodo(isDone: todo["isDone"], title: todo["title"], details: todo["details"], todoId: todo.documentID, listId: todoList.listId),
+                                showDetails: false,
+                              );
+                            }).toList(),
+                          ),
+                          
+                          _length > 4 ? 
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "...",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30.0,
+                                  fontFamily: "Poppins",
+                                  letterSpacing: 10
+                                ),
                               ),
-                            ),
-                          ],
-                        ) : SizedBox(height: 0)
+                            ],
+                          ) : SizedBox(height: 0)
 
-                      ],
-                    );
+                        ],
+                      );
+                      }
+                      if(snapshot.connectionState == ConnectionState.waiting){
+                        return CircularProgressIndicator();
+                      }
+                      return SizedBox(height: 0);
+                      
                     }
-                    if(snapshot.connectionState == ConnectionState.waiting){
-                      return CircularProgressIndicator();
-                    }
-                    return SizedBox(height: 0);
-                    
-                  }
+                  ),
                 ),
               )
             ],

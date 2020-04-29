@@ -201,190 +201,200 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     
     return ListView(
-        padding:
-            EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0, bottom: 20.0),
-        shrinkWrap: true,
-        children: <Widget>[
-          AppBar(
-            leading: MenuIcon(),
-            elevation: 0.0,
-            backgroundColor: Colors.transparent,
-          ),
-          
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding:
+                EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0, bottom: 20.0),
+            shrinkWrap: true,
+      children: <Widget>[
+        Column(
+            
             children: <Widget>[
-              Text(
-                'Hello ${this.widget.user.displayName.toString().split(" ")[0]}',
-                style: TextStyle(
-                    fontSize: 32.0,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w200,
-                    color: Theme.of(context).accentColor),
+              AppBar(
+                leading: MenuIcon(),
+                elevation: 0.0,
+                backgroundColor: Colors.transparent,
               ),
-              SmallButton(
-                icon: Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  this.widget.scaffoldKey.currentState.openEndDrawer();
-                },
-              )
-            ],
-          ),
-          SizedBox(height: 40.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                "Quick notes",
-                style: TextStyle(
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Poppins",
-                    color: Theme.of(context).accentColor),
-              )
-            ],
-          ),
-          SizedBox(height: 20.0),
-          StreamBuilder(
-            stream: widget.user.quickNotes,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data.documents.length == 0) {
-                  return Text(
-                    "No Quick Notes available",
+              
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Hello ${this.widget.user.displayName.toString().split(" ")[0]}',
                     style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 18.0,
-                      color: Theme.of(context).accentColor
+                        fontSize: 32.0,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w200,
+                        color: Theme.of(context).accentColor),
+                  ),
+                  SmallButton(
+                    icon: Icon(
+                      Icons.add,
+                      color: Colors.white,
                     ),
-                  );
-                }
-                return Column(
-                  children: <Widget>[
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: 100,
-                        maxHeight: MediaQuery.of(context).size.height * 0.4,
-                      ),
-                      child: Form(
-                          child: (ListView(
-                            shrinkWrap: true,
-                            padding: EdgeInsets.all(0),
-                            children: snapshot.data.documents
-                                .map<Widget>((DocumentSnapshot document) {
-                              return QuickNoteWidget(new QuickNote(
-                                  priority: Priority.fromPriorityValue(
-                                      document["priority"]),
-                                  isDone: document["isDone"],
-                                  title: document["title"],
-                                  documentPath: document.reference));
-                            }).toList())),
-                      ),
-                    ),
-                    SizedBox(height: 30.0),
-                          
-                  ],
-                );
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    (CircularProgressIndicator()),
-                  ],
-                );
-              }
-            },
-          ),
-
-          SizedBox(height: 70.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                "Lists",
-                style: TextStyle(
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Poppins",
-                    color: Theme.of(context).accentColor),
+                    onPressed: () {
+                      this.widget.scaffoldKey.currentState.openEndDrawer();
+                    },
+                  )
+                ],
               ),
-            ],
-          ),
-          SizedBox(height: 30.0),
-
-          StreamBuilder<QuerySnapshot>(
-            stream: widget.user.lists.asBroadcastStream(),
-            builder: (context, snapshot) {
-              if(snapshot.hasData){
-                if(snapshot.data.documents.length== 0){
-                  return(
-                    Row(
+              SizedBox(height: 40.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Quick notes",
+                    style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Poppins",
+                        color: Theme.of(context).accentColor),
+                  )
+                ],
+              ),
+              SizedBox(height: 20.0),
+              StreamBuilder(
+                stream: widget.user.quickNotes,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data.documents.length == 0) {
+                      return Text(
+                        "No Quick Notes available",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 18.0,
+                          color: Theme.of(context).accentColor
+                        ),
+                      );
+                    }
+                    return Column(
                       children: <Widget>[
-                        Text(
-                          "No Lists available",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 18.0,
-                            color: Theme.of(context).accentColor
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: 100,
+                            maxHeight: MediaQuery.of(context).size.height * 0.4,
                           ),
-                        )
+                          child: Form(
+                              child: (ListView(
+                                shrinkWrap: true,
+                                padding: EdgeInsets.all(0),
+                                children: snapshot.data.documents
+                                    .map<Widget>((DocumentSnapshot document) {
+                                  return QuickNoteWidget(new QuickNote(
+                                      priority: Priority.fromPriorityValue(
+                                          document["priority"]),
+                                      isDone: document["isDone"],
+                                      title: document["title"],
+                                      documentPath: document.reference));
+                                }).toList())),
+                          ),
+                        ),
+                        SizedBox(height: 30.0),
+                              
                       ],
-                    )
-                  );
-                }
-                return Container(
-                  width: MediaQuery.of(context).size.width - 40,
-                  height: 500.0,
-                  child:
-                      ListView(scrollDirection: Axis.horizontal, children: <Widget>[
-                    Row(
-                      children: snapshot.data.documents.map<Widget>(
-                        
-                        (DocumentSnapshot lists){
-                          
-                          TodoList _newTodoList = TodoList(
-                              listTitle: lists["title"],
-                              backgroundColor: hexToColor(lists["backgroundColor"]) ,
-                              listOfTodos: [],
-                              listId: lists.documentID,
-                              listOfTodosStream: lists.reference.collection("todos").snapshots()
-                          );
-                          print(_newTodoList.listOfTodos);
-                          return ListWidget(
-                            todoList: _newTodoList,
-                            onTap: () {
-                            _currentTodoListController.sink.add(_newTodoList);
-                            _showBottomSheet();
-                             },
-                          );
+                    );
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        (CircularProgressIndicator()),
+                      ],
+                    );
+                  }
+                },
+              ),
 
-                        }
-                      ).toList()
-                    )
-                  ]),
+              SizedBox(height: 70.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Lists",
+                    style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Poppins",
+                        color: Theme.of(context).accentColor),
+                  ),
+                ],
+              ),
+              SizedBox(height: 30.0),
+
+              StreamBuilder<QuerySnapshot>(
+                stream: widget.user.lists.asBroadcastStream(),
+                builder: (context, snapshot) {
+                  if(snapshot.hasData){
+                    if(snapshot.data.documents.length== 0){
+                      return(
+                        Row(
+              children: <Widget>[
+                Text(
+              "No Lists available",
+              style: TextStyle(
+                fontFamily: "Poppins",
+                fontSize: 18.0,
+                color: Theme.of(context).accentColor
+              ),
+                )
+              ],
+                        )
+                      );
+                    }
+                    return Container(
+                      width: MediaQuery.of(context).size.width - 40,
+                      //height: 00.0,
+                      child:
+              LimitedBox(
+                maxHeight: 550.0,
+                              child: ListView(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal, children: <Widget>[
+                          Row(
+                children: snapshot.data.documents.map<Widget>(
+                  
+                  (DocumentSnapshot lists){
+                
+                TodoList _newTodoList = TodoList(
+                    listTitle: lists["title"],
+                    backgroundColor: hexToColor(lists["backgroundColor"]) ,
+                    listOfTodos: [],
+                    listId: lists.documentID,
+                    listOfTodosStream: lists.reference.collection("todos").orderBy("isDone").snapshots()
                 );
-              }
-              if(snapshot.connectionState == ConnectionState.waiting){
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      height: 40,
-                      width: 40,
-                      child: CircularProgressIndicator()
-                    ),
-                  ],
+                
+                return ListWidget(
+                  todoList: _newTodoList,
+                  onTap: () {
+                    _currentTodoListController.sink.add(_newTodoList);
+                    _showBottomSheet();
+                  },
                 );
-              }
-              
-              
-            }
-          )
-        ]);
+
+                  }
+                ).toList()
+                          )
+                        ]),
+              ),
+                      );
+                  }
+                  if(snapshot.connectionState == ConnectionState.waiting){
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+              height: 40,
+              width: 40,
+              child: CircularProgressIndicator()
+                        ),
+                      ],
+                    );
+                  }
+                  
+                  
+                }
+              )
+            ]),
+      ],
+    );
   }
 }
 

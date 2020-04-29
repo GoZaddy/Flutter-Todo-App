@@ -204,7 +204,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
           ): SizedBox(height: 0.0),
           SizedBox(height: 30.0),
           StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance.collection("lists").document(_currentUser.uid).collection("userLists").document(widget.todoList.listId).collection("todos").snapshots(),
+            stream: Firestore.instance.collection("lists").document(_currentUser.uid).collection("userLists").document(widget.todoList.listId).collection("todos").orderBy("isDone").snapshots(),
             builder: (context, snapshot) {
 
               if(snapshot.connectionState == ConnectionState.waiting){

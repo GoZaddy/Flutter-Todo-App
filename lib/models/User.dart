@@ -44,9 +44,10 @@ class User {
 
   
 
-  void addList(String listTitle, List<ListTodo> listOfTodos,
+  Future addList(String listTitle, List<ListTodo> listOfTodos,
       String listBackgroundColor) async {
-    _db.collection("lists").document(uid).collection("userLists").add({
+
+    return _db.collection("lists").document(uid).collection("userLists").add({
       "title": listTitle,
       "backgroundColor": listBackgroundColor.toString()
     }).then((DocumentReference doc) {

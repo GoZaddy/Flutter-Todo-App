@@ -86,11 +86,28 @@ class _AddListState extends State<AddList> {
                         Icons.check,
                         color: Colors.white,
                       ),
-                      onPressed: (){                        
+                      onPressed: ()async {                        
                         if(_form.validate()){
                           _form.save();
-                          _currentUser.addList(_listTitle, _listOfTodos, "#${_selectedColor.toString().substring(10,16)}");
-                          
+                          showDialog(
+                            context: context,
+                            builder: (context){
+                              return AlertDialog(
+                                content: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      width: 40,
+                                      height:40,
+                                      child: CircularProgressIndicator()
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          );
+                          await _currentUser.addList(_listTitle, _listOfTodos, "#${_selectedColor.toString().substring(10,16)}");
+                          Navigator.pop(context);
                           showDialog(
                             context: context,
                             builder: (context){
@@ -98,14 +115,12 @@ class _AddListState extends State<AddList> {
                                 title: Text("New List added"),
                               );
                             }
-                          ).then((value){
-                            setState(() {
-                              _titleController.text = "";
-                              _listOfTodos.clear();
-                            });
+                          );
+                          setState(() {
+                            _titleController.text = "";
+                            _listOfTodos.clear();
                           });
-
-                          
+ 
                         }
 
                       }   

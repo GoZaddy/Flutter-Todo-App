@@ -68,7 +68,7 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                     color: Colors.yellow,
                     padding: EdgeInsets.all(0.0),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.of(context).pop();
                     },
                     icon:
                         Icon(Icons.clear, size: 26.0, color: Color(0xff616B77)),
