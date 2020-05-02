@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/constants/Constants.dart';
-import 'package:todo_app/models/ListTodo.dart';
-import 'package:todo_app/models/User.dart';
-import 'package:todo_app/widgets/SmallButton.dart';
+import 'package:todo_app/core/constants/Constants.dart';
+import 'package:todo_app/core/models/ListTodo.dart';
+import 'package:todo_app/core/models/User.dart';
+import 'package:todo_app/UI/widgets/SmallButton.dart';
+import 'package:todo_app/core/services/UserInfoService.dart';
 
 class AddList extends StatefulWidget {
   @override
@@ -27,6 +28,7 @@ class _AddListState extends State<AddList> {
   Widget build(BuildContext context) {
     FormState _form = _formKey.currentState;
     User _currentUser = Provider.of<User>(context);
+    UserInfoService _userService = new UserInfoService();
     return Scaffold(
       backgroundColor: Colors.white,
       body: ListView(
@@ -106,7 +108,12 @@ class _AddListState extends State<AddList> {
                               );
                             }
                           );
-                          await _currentUser.addList(_listTitle, _listOfTodos, "#${_selectedColor.toString().substring(10,16)}");
+                          await _userService.addList(
+                            uid:_currentUser.uid,
+                            listTitle:_listTitle,
+                            listOfTodos: _listOfTodos,
+                            listBackgroundColor:"#${_selectedColor.toString().substring(10,16)}"
+                            );
                           Navigator.pop(context);
                           showDialog(
                             context: context,

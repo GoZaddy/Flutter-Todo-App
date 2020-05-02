@@ -1,13 +1,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/pages/AddNewList.dart';
-import 'package:todo_app/pages/AddQuickNote.dart';
-import 'package:todo_app/pages/HomePage.dart';
-import 'package:todo_app/services/AuthService.dart';
-import 'package:todo_app/models/User.dart';
+import 'package:todo_app/UI/views/AddNewList.dart';
+import 'package:todo_app/UI/views/AddQuickNote.dart';
+import 'package:todo_app/UI/views/HomePage.dart';
+import 'package:todo_app/core/services/AuthService.dart';
+import 'package:todo_app/core/models/User.dart';
+import 'package:todo_app/locator.dart';
 
-void main() => runApp(MyApp());
+void main(){
+  setUpLocator();
+  runApp(MyApp());
+} 
 
 
 class MyApp extends StatelessWidget {

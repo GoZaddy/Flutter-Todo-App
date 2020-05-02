@@ -10,6 +10,7 @@ class SmallButton extends StatelessWidget {
     return Container(
       width: 45.0,
       child: RaisedButton(
+        elevation: 40,
         onPressed: onPressed,
         child: icon,
         shape:

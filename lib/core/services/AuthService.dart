@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:todo_app/models/User.dart';
+import 'package:todo_app/core/models/User.dart';
 
 class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -11,7 +11,7 @@ class AuthService {
 
   
   Stream<Map<String, dynamic>> profile; //custom user data in firestore
-  PublishSubject loading = PublishSubject();
+  
   
   User getUserFromFirebaseUser(FirebaseUser user){
     return user != null ? User.fromUid(user): null;
@@ -37,7 +37,7 @@ class AuthService {
   }
 
   Future<FirebaseUser> googleSignIn() async {
-    loading.add(true);
+    
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     AuthResult result = await _auth.signInWithCredential(GoogleAuthProvider.getCredential(
@@ -48,7 +48,7 @@ class AuthService {
     
     updateUserData(user); 
     
-    loading.add(false);
+    
     return user;
     
   }

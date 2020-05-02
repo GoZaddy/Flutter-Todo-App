@@ -5,8 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/main.dart';
-import 'package:todo_app/models/User.dart';
-import 'package:todo_app/services/AuthService.dart';
+import 'package:todo_app/core/models/User.dart';
+import 'package:todo_app/core/services/AuthService.dart';
 
 class DebuggingScreen extends StatelessWidget {
   

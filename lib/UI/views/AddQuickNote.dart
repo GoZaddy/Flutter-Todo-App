@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:random_words/random_words.dart';
-import 'package:todo_app/models/Priority.dart';
-import 'package:todo_app/models/User.dart';
-import 'package:todo_app/widgets/SelectPriorityButton.dart';
-import 'package:todo_app/widgets/SmallButton.dart';
-import 'package:todo_app/widgets/SuggestionTile.dart';
+import 'package:todo_app/core/models/Priority.dart';
+import 'package:todo_app/core/models/User.dart';
+import 'package:todo_app/UI/widgets/SelectPriorityButton.dart';
+import 'package:todo_app/UI/widgets/SmallButton.dart';
+import 'package:todo_app/UI/widgets/SuggestionTile.dart';
+import 'package:todo_app/core/services/UserInfoService.dart';
 
 class AddQuickNote extends StatefulWidget {
   @override
@@ -47,6 +48,7 @@ class _AddQuickNoteState extends State<AddQuickNote> {
   Widget build(BuildContext context) {
     FocusNode _textInputFocusNode = new FocusNode();
     User currentUser = Provider.of<User>(context);
+    UserInfoService _userService = new UserInfoService();
 
     _textController.addListener((){
       _quickNoteTitle = _textController.text;
@@ -105,7 +107,8 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                         color: Colors.white,
                       ),
                       onPressed: (){
-                        currentUser.addQuickNote(
+                        _userService.addQuickNote(
+                          currentUser.uid,
                           {
                             "priority": _quickNotePriority.priorityValue,
                             "title": _quickNoteTitle,
