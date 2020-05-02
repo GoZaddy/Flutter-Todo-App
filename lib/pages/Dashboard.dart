@@ -2,18 +2,18 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/UI/widgets/All_Lists.dart';
-import 'package:todo_app/UI/widgets/All_Quick_Notes.dart';
-import 'package:todo_app/core/models/Priority.dart';
-import 'package:todo_app/core/models/QuickNote.dart';
-import 'package:todo_app/core/models/User.dart';
-import 'package:todo_app/core/services/AuthService.dart';
-import 'package:todo_app/UI/widgets/ListBottomSheet.dart';
-import 'package:todo_app/UI/widgets/MenuIcon.dart';
-import 'package:todo_app/UI/widgets/QuickNoteWidget.dart';
+import 'package:todo_app/constants/Constants.dart';
+import 'package:todo_app/models/Priority.dart';
+import 'package:todo_app/models/QuickNote.dart';
+import 'package:todo_app/models/User.dart';
+import 'package:todo_app/services/AuthService.dart';
+import 'package:todo_app/widgets/ListBottomSheet.dart';
+import 'package:todo_app/widgets/ListWidget.dart';
+import 'package:todo_app/widgets/MenuIcon.dart';
+import 'package:todo_app/widgets/QuickNoteWidget.dart';
 
-import 'package:todo_app/core/models/TodoList.dart';
-import 'package:todo_app/UI/widgets/SmallButton.dart';
+import 'package:todo_app/models/TodoList.dart';
+import 'package:todo_app/widgets/SmallButton.dart';
 
 
 
@@ -182,11 +182,11 @@ class _DashboardState extends State<Dashboard> {
     super.dispose();
   }
 
-  
   void _showBottomSheet() {
     _controller =
         this.widget.scaffoldKey.currentState.showBottomSheet((context) {
       return ListBottomSheet(
+        controller: _controller,
         todoList: this._currentTodoList,
         closeBottomSheet: _closeBottomSheet,
       );
@@ -202,8 +202,8 @@ class _DashboardState extends State<Dashboard> {
     
     return ListView(
       padding:
-        EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0, bottom: 20.0),
-      shrinkWrap: true,
+                EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0, bottom: 20.0),
+            shrinkWrap: true,
       children: <Widget>[
         AppBar(
           leading: MenuIcon(),
@@ -248,8 +248,56 @@ class _DashboardState extends State<Dashboard> {
           ],
         ),
         SizedBox(height: 20.0),
-        AllQuickNotes(
-          uid: widget.user.uid
+        StreamBuilder(
+          stream: widget.user.quickNotes,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data.documents.length == 0) {
+                return Text(
+                  "No Quick Notes available",
+                  style: TextStyle(
+                    fontFamily: "Poppins",
+                    fontSize: 18.0,
+                    color: Theme.of(context).accentColor
+                  ),
+                );
+              }
+              return Column(
+                children: <Widget>[
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: 100,
+                      maxHeight: MediaQuery.of(context).size.height * 0.4,
+                    ),
+                    child: Form(
+                        child: (ListView(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.all(0),
+                          children: snapshot.data.documents
+                              .map<Widget>((DocumentSnapshot document) {
+                            return QuickNoteWidget(new QuickNote(
+                                priority: Priority.fromPriorityValue(
+                                    document["priority"]),
+                                isDone: document["isDone"],
+                                title: document["title"],
+                                documentPath: document.reference));
+                          }).toList())),
+                    ),
+                  ),
+                  SizedBox(height: 30.0),
+                        
+                ],
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  (CircularProgressIndicator()),
+                ],
+              );
+            }
+          },
         ),
 
         SizedBox(height: 70.0),
@@ -268,13 +316,79 @@ class _DashboardState extends State<Dashboard> {
         ),
         SizedBox(height: 30.0),
 
-        AllLists(
-          uid: widget.user.uid,
-          showList: (TodoList todoList){
-            _currentTodoListController.sink.add(todoList);
-            _showBottomSheet();
-          },
-        )
+        StreamBuilder<QuerySnapshot>(
+          stream: widget.user.lists.asBroadcastStream(),
+          builder: (context, snapshot) {
+            if(snapshot.hasData){
+              if(snapshot.data.documents.length== 0){
+                return(
+                  Row(
+        children: <Widget>[
+          Text(
+        "No Lists available",
+        style: TextStyle(
+          fontFamily: "Poppins",
+          fontSize: 18.0,
+          color: Theme.of(context).accentColor
+        ),
+          )
+        ],
+                  )
+                );
+              }
+              return Container(
+                width: MediaQuery.of(context).size.width - 40,
+                //height: 00.0,
+                child:
+        LimitedBox(
+          maxHeight: 550.0,
+                        child: ListView(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal, children: <Widget>[
+                    Row(
+          children: snapshot.data.documents.map<Widget>(
+            
+            (DocumentSnapshot lists){
+          
+          TodoList _newTodoList = TodoList(
+              listTitle: lists["title"],
+              backgroundColor: hexToColor(lists["backgroundColor"]) ,
+              listOfTodos: [],
+              listId: lists.documentID,
+              listOfTodosStream: lists.reference.collection("todos").orderBy("isDone").snapshots()
+          );
+          
+          return ListWidget(
+            todoList: _newTodoList,
+            onTap: () {
+              _currentTodoListController.sink.add(_newTodoList);
+              _showBottomSheet();
+            },
+          );
+
+            }
+          ).toList()
+                    )
+                  ]),
+        ),
+                );
+            }
+            if(snapshot.connectionState == ConnectionState.waiting){
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+        height: 40,
+        width: 40,
+        child: CircularProgressIndicator()
+                  ),
+                ],
+              );
+            }
+            
+            
+          }
+        ),
       ],
     );
   }

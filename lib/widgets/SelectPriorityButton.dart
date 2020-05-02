@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/core/models/Priority.dart';
+import 'package:todo_app/models/Priority.dart';
 
 class SelectPriorityButton extends StatelessWidget {
   final VoidCallback onPressed;

@@ -31,7 +31,6 @@ dependencies:
   provider:
   random_words:
   animated_splash:
-  get_it:
 
 dev_dependencies:
   flutter_test:
