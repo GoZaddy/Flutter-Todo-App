@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/models/ListTodo.dart';
-import 'package:todo_app/models/User.dart';
-import 'package:todo_app/widgets/NoWidget.dart';
+import 'package:todo_app/src/models/ListTodo.dart';
+import 'package:todo_app/src/models/User.dart';
+import 'package:todo_app/src/UI/widgets/NoWidget.dart';
+import 'package:todo_app/src/resources/repository.dart';
 
 class ListTodoWidget extends StatefulWidget {
-  ListTodo todo;
+  final ListTodo todo;
   final bool showDetails;
   final double checkboxAndTextSpace;
   final bool enableAddingDetails;
@@ -23,8 +24,9 @@ class ListTodoWidget extends StatefulWidget {
 class _ListTodoWidgetState extends State<ListTodoWidget> {
   @override
   Widget build(BuildContext context) {
-    ListTodo _listTodoPassed = widget.todo;
-    User _currentUser = Provider.of<User>(context);
+    final ListTodo _listTodoPassed = widget.todo;
+    final User _currentUser = Provider.of<User>(context);
+    final _repository = Repository();
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Row(
@@ -43,7 +45,12 @@ class _ListTodoWidgetState extends State<ListTodoWidget> {
                 setState(() {
                   _listTodoPassed.isDone = newValue;
                 });
-                widget.todo.setIsDone(_currentUser.uid);
+                _repository.setListTodoIsDone(
+                  uid:_currentUser.uid,
+                  todoId: widget.todo.todoId,
+                  listId: widget.todo.listId,
+                  isDone: newValue
+                );
               },
             ),
           ),

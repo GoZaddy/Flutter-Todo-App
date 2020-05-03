@@ -1,34 +1,35 @@
-import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/constants/Constants.dart';
-import 'package:todo_app/models/Priority.dart';
-import 'package:todo_app/models/QuickNote.dart';
-import 'package:todo_app/models/User.dart';
-import 'package:todo_app/services/AuthService.dart';
-import 'package:todo_app/widgets/ListBottomSheet.dart';
-import 'package:todo_app/widgets/ListWidget.dart';
-import 'package:todo_app/widgets/MenuIcon.dart';
-import 'package:todo_app/widgets/QuickNoteWidget.dart';
-
-import 'package:todo_app/models/TodoList.dart';
-import 'package:todo_app/widgets/SmallButton.dart';
-
-
+import 'package:todo_app/src/UI/widgets/all_lists.dart';
+import 'package:todo_app/src/UI/widgets/all_quick_notes.dart';
+import 'package:todo_app/src/bloc_providers/dashboard_bloc_provider.dart';
+import 'package:todo_app/src/blocs/dashboard_bloc.dart';
+import 'package:todo_app/src/models/User.dart';
+import 'package:todo_app/src/resources/auth_service.dart';
+import 'package:todo_app/src/UI/widgets/ListBottomSheet.dart';
+import 'package:todo_app/src/UI/widgets/MenuIcon.dart';
+import 'package:todo_app/src/models/TodoList.dart';
+import 'package:todo_app/src/UI/widgets/SmallButton.dart';
 
 class DashboardScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final DashboardBloc bloc;
+  DashboardScreen({
+    this.bloc
+  });
   @override
   Widget build(BuildContext context) {
-
     final currentUser = Provider.of<User>(context);
-    
-    
+
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
-        body: Dashboard(currentUser, _scaffoldKey),
+        body: Dashboard(
+          bloc:bloc,
+          user: currentUser,
+          scaffoldKey: _scaffoldKey
+        ),
         endDrawer: Container(
           padding:
               EdgeInsets.only(left: 20.0, right: 20.0, top: 40.0, bottom: 20.0),
@@ -76,9 +77,10 @@ class DashboardScreen extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pushNamed(context, "/addQuickNote");
+                            onPressed: () async {
+                              print(Navigator);
+                              //Navigator.pop(context);
+                              await Navigator.popAndPushNamed(context, "/addQuickNote");
                             },
                           )
                         ],
@@ -100,9 +102,9 @@ class DashboardScreen extends StatelessWidget {
                               Icons.insert_drive_file,
                               color: Colors.white,
                             ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pushNamed(context, "/addList");
+                            onPressed: () async {
+                              
+                              await Navigator.popAndPushNamed(context, "/addList");
                             },
                           )
                         ],
@@ -125,12 +127,11 @@ class DashboardScreen extends StatelessWidget {
                               Icons.exit_to_app,
                               color: Colors.white,
                             ),
-                            onPressed: () async{
+                            onPressed: () async {
                               await AuthService().signOut();
-                               print(currentUser);
-                               
-                               Navigator.of(context).pop();
-                             
+                              print(currentUser);
+
+                              Navigator.of(context).pop();
                             },
                           )
                         ],
@@ -148,13 +149,14 @@ class DashboardScreen extends StatelessWidget {
 }
 
 class Dashboard extends StatefulWidget {
-  GlobalKey<ScaffoldState> scaffoldKey;
-  User user;
-
-  Dashboard(dynamic user, GlobalKey<ScaffoldState> scaffoldKey) {
-    this.user = user;
-    this.scaffoldKey = scaffoldKey;
-  }
+   final GlobalKey<ScaffoldState> scaffoldKey;
+   final User user;
+   final DashboardBloc bloc;
+  Dashboard({
+    this.bloc,
+    this.scaffoldKey,
+    this.user
+  });
 
   @override
   _DashboardState createState() => _DashboardState();
@@ -163,35 +165,42 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   PersistentBottomSheetController _controller;
   TodoList _currentTodoList;
-  StreamController<TodoList> _currentTodoListController =
-      new StreamController<TodoList>();
-
+  
   @override
   void initState() {
     
     super.initState();
-    _currentTodoListController.stream.listen((TodoList todo) {
-      _currentTodoList = todo;
-    });
     
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+     
+     widget.bloc.currentlyShownList.listen((data){
+      _currentTodoList = data;
+    });
+    
+   
+  }
+
+  @override
   void dispose() {
-    _currentTodoListController.close();
+    
     super.dispose();
   }
 
   void _showBottomSheet() {
     _controller =
         this.widget.scaffoldKey.currentState.showBottomSheet((context) {
-      return ListBottomSheet(
-        controller: _controller,
-        todoList: this._currentTodoList,
-        closeBottomSheet: _closeBottomSheet,
+          return ListBottomSheet(
+            todoList: _currentTodoList,
+            closeBottomSheet: _closeBottomSheet,
+          );
+        }
       );
-    });
-  }
+    }
+  
 
   void _closeBottomSheet() {
     _controller.close();
@@ -199,18 +208,24 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+   
+    if(_currentTodoList == null){
+      print("I am null ooo");
+    }
+    else{
+      print(_currentTodoList.listTitle);
+    }
     
     return ListView(
       padding:
-                EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0, bottom: 20.0),
-            shrinkWrap: true,
+          EdgeInsets.only(left: 30.0, right: 30.0, top: 40.0, bottom: 20.0),
+      shrinkWrap: true,
       children: <Widget>[
         AppBar(
           leading: MenuIcon(),
           elevation: 0.0,
           backgroundColor: Colors.transparent,
         ),
-        
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -248,58 +263,7 @@ class _DashboardState extends State<Dashboard> {
           ],
         ),
         SizedBox(height: 20.0),
-        StreamBuilder(
-          stream: widget.user.quickNotes,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data.documents.length == 0) {
-                return Text(
-                  "No Quick Notes available",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 18.0,
-                    color: Theme.of(context).accentColor
-                  ),
-                );
-              }
-              return Column(
-                children: <Widget>[
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: 100,
-                      maxHeight: MediaQuery.of(context).size.height * 0.4,
-                    ),
-                    child: Form(
-                        child: (ListView(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.all(0),
-                          children: snapshot.data.documents
-                              .map<Widget>((DocumentSnapshot document) {
-                            return QuickNoteWidget(new QuickNote(
-                                priority: Priority.fromPriorityValue(
-                                    document["priority"]),
-                                isDone: document["isDone"],
-                                title: document["title"],
-                                documentPath: document.reference));
-                          }).toList())),
-                    ),
-                  ),
-                  SizedBox(height: 30.0),
-                        
-                ],
-              );
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  (CircularProgressIndicator()),
-                ],
-              );
-            }
-          },
-        ),
-
+        AllQuickNotes(allQuickNotesStream: widget.bloc.fetchQuickNotes(widget.user.uid)),
         SizedBox(height: 70.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -315,83 +279,13 @@ class _DashboardState extends State<Dashboard> {
           ],
         ),
         SizedBox(height: 30.0),
-
-        StreamBuilder<QuerySnapshot>(
-          stream: widget.user.lists.asBroadcastStream(),
-          builder: (context, snapshot) {
-            if(snapshot.hasData){
-              if(snapshot.data.documents.length== 0){
-                return(
-                  Row(
-        children: <Widget>[
-          Text(
-        "No Lists available",
-        style: TextStyle(
-          fontFamily: "Poppins",
-          fontSize: 18.0,
-          color: Theme.of(context).accentColor
-        ),
-          )
-        ],
-                  )
-                );
-              }
-              return Container(
-                width: MediaQuery.of(context).size.width - 40,
-                //height: 00.0,
-                child:
-        LimitedBox(
-          maxHeight: 550.0,
-                        child: ListView(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal, children: <Widget>[
-                    Row(
-          children: snapshot.data.documents.map<Widget>(
-            
-            (DocumentSnapshot lists){
-          
-          TodoList _newTodoList = TodoList(
-              listTitle: lists["title"],
-              backgroundColor: hexToColor(lists["backgroundColor"]) ,
-              listOfTodos: [],
-              listId: lists.documentID,
-              listOfTodosStream: lists.reference.collection("todos").orderBy("isDone").snapshots()
-          );
-          
-          return ListWidget(
-            todoList: _newTodoList,
-            onTap: () {
-              _currentTodoListController.sink.add(_newTodoList);
-              _showBottomSheet();
-            },
-          );
-
-            }
-          ).toList()
-                    )
-                  ]),
-        ),
-                );
-            }
-            if(snapshot.connectionState == ConnectionState.waiting){
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-        height: 40,
-        width: 40,
-        child: CircularProgressIndicator()
-                  ),
-                ],
-              );
-            }
-            
-            
-          }
-        ),
+        
+        AllLists(
+          allListsStream: widget.bloc.fetchLists(widget.user.uid),
+          dashboardBloc: widget.bloc,
+          showBottomSheet: _showBottomSheet
+        )
       ],
     );
   }
 }
-
-

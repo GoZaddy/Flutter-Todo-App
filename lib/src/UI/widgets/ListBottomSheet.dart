@@ -1,14 +1,12 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/constants/Constants.dart';
-import 'package:todo_app/models/ListTodo.dart';
-import 'package:todo_app/models/TodoList.dart';
-import 'package:todo_app/models/User.dart';
-import 'package:todo_app/widgets/ColorPickerButton.dart';
-import 'package:todo_app/widgets/ListTodoWidget.dart';
+import 'package:todo_app/src/blocs/dashboard_bloc.dart';
+import 'package:todo_app/src/constants/Constants.dart';
+import 'package:todo_app/src/models/TodoList.dart';
+import 'package:todo_app/src/models/User.dart';
+import 'package:todo_app/src/UI/widgets/ColorPickerButton.dart';
+import 'package:todo_app/src/UI/widgets/ListTodoWidget.dart';
+import 'package:todo_app/src/resources/repository.dart';
 
 class ListBottomSheet extends StatefulWidget {
   final PersistentBottomSheetController controller;
@@ -30,7 +28,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
   bool _inEditingMode = false;
   TextEditingController _todoTitleController = new TextEditingController();
   TextEditingController _newTodoController = new TextEditingController();
-  
+ 
   FocusNode _focusNode = new FocusNode();
  
   
@@ -47,18 +45,26 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
   }
 
   @override
+  void didChangeDependencies() {
+    widget.todoList.init();
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     _todoTitleController.dispose();
     _focusNode.dispose();
+    
     super.dispose();
     
   }
   @override
   Widget build(BuildContext context) {
     
-    User _currentUser = Provider.of<User>(context);
+    final User _currentUser = Provider.of<User>(context);
+    final Repository _repository = new Repository();
     
-
+    print(widget.todoList.listOfTodos.toString());
     return Container(
       padding: EdgeInsets.only(left: 40, right:40, top: 15, bottom: 35),
       height: MediaQuery.of(context).size.height * 0.7,
@@ -129,7 +135,11 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                       _focusNode.requestFocus();
                     }
                     else{
-                      widget.todoList.updateTitle(_currentUser.uid, _todoTitleController.text);
+                      _repository.updateListTitle(
+                        uid: _currentUser.uid,
+                        listId: widget.todoList.listId,
+                        newTitle: _todoTitleController.text
+                      );
                     }
                   },
                 )
@@ -152,7 +162,11 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                           isSelectedColor: widget.todoList.backgroundColor == color,
                           color: color,
                           onTap: (){
-                            widget.todoList.setBackgroundColor(_currentUser.uid, color); 
+                            _repository.setBackgroundColor(
+                              uid: _currentUser.uid,
+                              listId: widget.todoList.listId,
+                              newColor: color
+                            ); 
                             setState((){});             
                           },
                         );
@@ -177,7 +191,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                                 onPressed: (){
                                   Navigator.pop(context);
                                   widget.closeBottomSheet();
-                                  widget.todoList.deleteList(_currentUser.uid);
+                                  _repository.deleteList(uid:_currentUser.uid, listId: widget.todoList.listId);
                                 },
                               ),
                               FlatButton(
@@ -202,8 +216,25 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
             ],
           ): SizedBox(height: 0.0),
           SizedBox(height: 30.0),
-          StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance.collection("lists").document(_currentUser.uid).collection("userLists").document(widget.todoList.listId).collection("todos").orderBy("isDone").snapshots(),
+          Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widget.todoList.listOfTodos.map<Widget>(
+                  (todo){
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 5.0),
+                      width: double.infinity,
+                      child: ListTodoWidget(
+                        enableAddingDetails: _inEditingMode,
+                        checkboxAndTextSpace: 30.0,
+                        todo: todo,
+                        showDetails: true
+                      ),
+                    );
+                  }
+                ).toList()
+              ),
+          /* StreamBuilder<QuerySnapshot>(
+            stream: widget.todoList.,
             builder: (context, snapshot) {
 
               if(snapshot.connectionState == ConnectionState.waiting){
@@ -238,12 +269,16 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
               );
               } 
             }
-          ),
+          ),*/
           Row(
             children: <Widget>[
               GestureDetector(
                 onTap: (){
-                  widget.todoList.addNewTodo(_newTodoController.text, _currentUser.uid);
+                  _repository.addNewTodo(
+                    uid: _currentUser.uid,
+                    todoTitle: _newTodoController.text,
+                    listId: widget.todoList.listId
+                  );
                   _newTodoController.text = "";
                 },
                 child: Container(

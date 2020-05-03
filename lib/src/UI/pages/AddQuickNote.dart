@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:random_words/random_words.dart';
-import 'package:todo_app/models/Priority.dart';
-import 'package:todo_app/models/User.dart';
-import 'package:todo_app/widgets/SelectPriorityButton.dart';
-import 'package:todo_app/widgets/SmallButton.dart';
-import 'package:todo_app/widgets/SuggestionTile.dart';
+import 'package:todo_app/src/models/Priority.dart';
+import 'package:todo_app/src/models/User.dart';
+import 'package:todo_app/src/UI/widgets/SelectPriorityButton.dart';
+import 'package:todo_app/src/UI/widgets/SmallButton.dart';
+import 'package:todo_app/src/UI/widgets/SuggestionTile.dart';
+import 'package:todo_app/src/resources/repository.dart';
 
 class AddQuickNote extends StatefulWidget {
   @override
@@ -18,12 +19,13 @@ class _AddQuickNoteState extends State<AddQuickNote> {
   String _quickNoteTitle;
   StreamController<String> _suggestionsTextController = new StreamController<String>();
   Priority _quickNotePriority = Priority.fromPriorityValue(3);
-  List<int> _priorityValues = [1,2,3];
+  final List<int> _priorityValues = [1,2,3];
   int _selectedPriorityValue = 3;
 
-  TextEditingController _textController =  new TextEditingController();
+  final TextEditingController _textController =  new TextEditingController();
 
-  Iterable<String> _suggestions = [...adjectives.take(7), ...nouns.take(8)];
+  final _repository = Repository();
+  final Iterable<String> _suggestions = [...adjectives.take(7), ...nouns.take(8)];
 
   @override
   void initState() {
@@ -105,8 +107,9 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                         color: Colors.white,
                       ),
                       onPressed: (){
-                        currentUser.addQuickNote(
-                          {
+                        _repository.addQuickNote(
+                          uid: currentUser.uid,
+                          quickNoteData: {
                             "priority": _quickNotePriority.priorityValue,
                             "title": _quickNoteTitle,
                             "isDone": false

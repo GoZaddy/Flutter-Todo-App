@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/QuickNote.dart';
-import 'package:todo_app/widgets/SmallButton.dart';
+import 'package:todo_app/src/models/QuickNote.dart';
+import 'package:todo_app/src/UI/widgets/SmallButton.dart';
+import 'package:todo_app/src/resources/repository.dart';
 
 class QuickNoteWidget extends StatefulWidget {
   final QuickNote quickNoteInfo;
-  QuickNoteWidget(this.quickNoteInfo);
+  final String uid;
+  QuickNoteWidget(
+    this.uid,
+    this.quickNoteInfo
+  );
   @override
   _QuickNoteWidgetState createState() => _QuickNoteWidgetState();
 }
 
 
 class _QuickNoteWidgetState extends State<QuickNoteWidget> {
-  TextEditingController _quickNoteTitleController = new TextEditingController(); 
+  TextEditingController _quickNoteTitleController = new TextEditingController();
+  final _repository = Repository(); 
+  
   @override
   void initState() {
     super.initState();
-   print(widget.quickNoteInfo.documentPath);
+   
   }
 
   @override
@@ -67,7 +74,11 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        widget.quickNoteInfo.setItemTitle(_quickNoteTitleController.text);
+                        _repository.setQuickNoteTitle(
+                          uid: widget.uid,
+                          quickNoteId: widget.quickNoteInfo.quickNoteId,
+                          newTitle:_quickNoteTitleController.text
+                        );
                         Navigator.of(context).pop();
                         
                       },
@@ -109,7 +120,11 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
                       setState(() {
                         this.widget.quickNoteInfo.isDone = isChecked;
                       });
-                      widget.quickNoteInfo.setItemIsDone();
+                     _repository.setQuickNoteIsDone(
+                       uid: widget.uid,
+                       quickNoteId: widget.quickNoteInfo.quickNoteId,
+                       isDone: isChecked
+                     );
                     },
                   ),
                 ),
@@ -139,7 +154,10 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(30.0),
                       onTap: () {
-                        widget.quickNoteInfo.delete();
+                        _repository.deleteQuickNote(
+                          uid: widget.uid,
+                          quickNoteId: widget.quickNoteInfo.quickNoteId
+                        );
                       },
                       child: Icon(
                         Icons.clear,

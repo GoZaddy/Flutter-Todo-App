@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/Priority.dart';
+import 'package:todo_app/src/models/Priority.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QuickNote{
-  DocumentReference documentPath;
+  String quickNoteId;
   Priority priority;
   bool isDone;
   String title;
@@ -13,14 +13,12 @@ class QuickNote{
     @required this.priority,
     @required this.isDone,
     @required this.title,
-    this.documentPath
+    @required this.quickNoteId
   });
 
 
-  set itemPriority(Priority newPriority){
-    this.priority = newPriority;
-  } 
-  void setItemIsDone(){
+  
+ /* void setItemIsDone(){
     this.documentPath.updateData({
       'isDone': isDone
     });
@@ -35,9 +33,8 @@ class QuickNote{
   void delete(){
     this.documentPath.delete();
   }
-  set itemTitle(String title){
-    this.title = title;
-  }
+  
+  */
 
   
 

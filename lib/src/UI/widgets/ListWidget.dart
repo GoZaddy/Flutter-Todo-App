@@ -1,13 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/ListTodo.dart';
-import 'package:todo_app/models/TodoList.dart';
-import 'package:todo_app/widgets/ListTodoWidget.dart';
+import 'package:todo_app/src/models/TodoList.dart';
+import 'package:todo_app/src/UI/widgets/ListTodoWidget.dart';
 
 
 
 
-class ListWidget extends StatelessWidget {
+class ListWidget extends StatefulWidget {
   final TodoList todoList;
   final VoidCallback onTap;
 
@@ -15,21 +13,31 @@ class ListWidget extends StatelessWidget {
     this.todoList,
     this.onTap
   });
-  
+
+  @override
+  _ListWidgetState createState() => _ListWidgetState();
+}
+
+class _ListWidgetState extends State<ListWidget> {
+  @override
+  void initState() {
+    widget.todoList.init();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Container(
         margin: EdgeInsets.fromLTRB(0.0, 0.0, 40.0, 0.0),
         height: 600,
         width: 250.0,
         
         decoration: BoxDecoration(
-          color: todoList.backgroundColor,
+          color: widget.todoList.backgroundColor,
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: todoList.backgroundColor,
+              color: widget.todoList.backgroundColor,
               offset: Offset(0, 0),
               blurRadius: 3,
               spreadRadius: 0
@@ -40,7 +48,7 @@ class ListWidget extends StatelessWidget {
           borderRadius: BorderRadius.only(topRight: Radius.circular(20.0), bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0))
         ),
         child: GestureDetector(
-          onTap: onTap,
+          onTap: widget.onTap,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +61,7 @@ class ListWidget extends StatelessWidget {
                     Container(
                       width: 100.0,
                       child: Text(
-                        todoList.listTitle,
+                        widget.todoList.listTitle,
                         style: TextStyle(
                           fontFamily: "Poppins",
                           fontSize: 20,
@@ -73,7 +81,39 @@ class ListWidget extends StatelessWidget {
               Expanded(
                               child: Padding(
                   padding: const EdgeInsets.only(left:30.0, right: 50.0, top: 10.0, bottom: 20.0),
-                  child: StreamBuilder<QuerySnapshot>(
+                  child: Column(
+                        
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:widget.todoList.listOfTodos.map((todo){                       
+                              return ListTodoWidget(
+                                todo: todo,
+                                showDetails: false,
+                              );
+                            }).toList(),
+                          ),
+                          
+                          widget.todoList.listOfTodos.length > 4 ? 
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "...",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30.0,
+                                  fontFamily: "Poppins",
+                                  letterSpacing: 10
+                                ),
+                              ),
+                            ],
+                          ) : SizedBox(height: 0)
+
+                        ],
+                      ),
+                  
+                  /*StreamBuilder<QuerySnapshot>(
                     stream: todoList.listOfTodosStream,
                     builder: (context, snapshot) {
                       
@@ -117,7 +157,7 @@ class ListWidget extends StatelessWidget {
                       return SizedBox(height: 0);
                       
                     }
-                  ),
+                  ),*/
                 ),
               )
             ],
