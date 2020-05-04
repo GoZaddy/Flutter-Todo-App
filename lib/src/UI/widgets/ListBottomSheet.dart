@@ -11,14 +11,12 @@ import 'package:todo_app/src/UI/widgets/ListTodoWidget.dart';
 import 'package:todo_app/src/resources/repository.dart';
 
 class ListBottomSheet extends StatefulWidget {
-  final PersistentBottomSheetController controller;
   final TodoList todoList;
   final VoidCallback closeBottomSheet;
-
+  
   ListBottomSheet({
     this.todoList,
     this.closeBottomSheet,
-    this.controller
   });
 
   @override
@@ -32,17 +30,20 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
   TextEditingController _newTodoController = new TextEditingController();
  
   FocusNode _focusNode = new FocusNode();
- 
+
+  Color _temporaryColor;
+   
   
   
   @override
   void initState() {
     super.initState();
-     
-    setState(() {
+     _temporaryColor = widget.todoList.backgroundColor;
+ 
+    
       _todoTitleController.text = widget.todoList.listTitle;
       
-    });
+    
 
   }
 
@@ -55,6 +56,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
   @override
   void dispose() {
     _todoTitleController.dispose();
+    _newTodoController.dispose();
     _focusNode.dispose();
     
     super.dispose();
@@ -66,13 +68,14 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
     final User _currentUser = Provider.of<User>(context);
     final Repository _repository = new Repository();
     
+    
     print(widget.todoList.listOfTodos.toString());
     return Container(
       padding: EdgeInsets.only(left: 40, right:40, top: 15, bottom: 50),
       height: MediaQuery.of(context).size.height * 0.7,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: widget.todoList.backgroundColor,
+        color: _temporaryColor,
         borderRadius: BorderRadius.only(topRight: Radius.circular(50))
       ),
       child: ListView(
@@ -86,7 +89,10 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                   color: Colors.white,
                   size: 25,
                 ),
-                onPressed: widget.closeBottomSheet,
+                onPressed:(){
+                  _temporaryColor = widget.todoList.backgroundColor;
+                  widget.closeBottomSheet();
+                } 
               )
             ],
           ),
@@ -144,6 +150,13 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                         listId: widget.todoList.listId,
                         newTitle: _todoTitleController.text
                       );
+                      widget.todoList.backgroundColor = _temporaryColor;
+                      _repository.setBackgroundColor(
+                        uid: _currentUser.uid,
+                        listId: widget.todoList.listId,
+                        newColor: widget.todoList.backgroundColor
+                      );
+                       
                     }
                   },
                 )
@@ -163,16 +176,12 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                     children: listOfColorsForColorPicker.map(
                       (color){
                         return ColorPickerButton(
-                          isSelectedColor: widget.todoList.backgroundColor == color,
+                          isSelectedColor: _temporaryColor == color,
                           color: color,
-                          onTap: (){
-                            widget.todoList.backgroundColor = color;
-                            _repository.setBackgroundColor(
-                              uid: _currentUser.uid,
-                              listId: widget.todoList.listId,
-                              newColor: color
-                            ); 
-                            setState((){});             
+                          onTap: (){ 
+                            setState((){
+                              _temporaryColor = color;
+                            });             
                           },
                         );
                       }

@@ -1,80 +1,22 @@
 
 import 'package:animated_splash/animated_splash.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:todo_app/src/UI/widgets/slide_animation_provider.dart';
 import 'package:todo_app/src/blocs/auth_bloc.dart';
 import 'package:todo_app/src/enums/enums.dart';
 
 
 
-class LoginPage extends StatefulWidget {
-  
+class LoginPage extends StatelessWidget {
+  final AuthBloc bloc;
+  LoginPage({
+    @required this.bloc
+  });
 
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
-  AuthBloc authBloc;
- /* AnimationController _animationController;
-  AnimationController _animationFadeController;
-  Animation<Offset> _offsetAnimation;
-  Animation<double> _opacity;*/
-  @override
-  void initState() {
-    /*_animationController = AnimationController(
-      duration: const Duration(milliseconds: 2500),
-      vsync: this
-    )..forward();
-
-    _animationFadeController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this
-    )..forward();
-    
-    _offsetAnimation = Tween<Offset>(
-      begin: Offset(-1.5, 0),
-      
-      end: Offset(0,0)
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutBack
-        
-      )
-    );
-
-    _opacity = Tween<double>(
-      begin: 0.0,
-      end: 1.0
-    ).animate(
-      CurvedAnimation(parent: _animationFadeController, curve: Curves.ease)
-    );*/
-
-    super.initState();
-    
-    
-  }
-
-  @override
-  void didChangeDependencies() {
-    authBloc = Provider.of<AuthBloc>(context);
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    authBloc.dispose();
-    super.dispose();
-    //_animationController.dispose();
-  }
-
-  
-  Widget _buildProgressIndicator (){
+   Widget _buildProgressIndicator (){
     return StreamBuilder(
       initialData: false,
-      stream: authBloc.authState,
+      stream: bloc.authState,
       builder: (context, snapshot){
         if(snapshot.data == AuthState.loading){
           return CircularProgressIndicator();
@@ -157,7 +99,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
                     ),
                     padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
                     onPressed: () async{
-                      await authBloc.signInWithGoogle();
+                      await bloc.signInWithGoogle();
                     },
                     child: Text(
                       "Sign in with Google",
@@ -180,5 +122,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
       
     );
   }
+
+  
 }
 

@@ -8,7 +8,7 @@ import 'package:todo_app/src/resources/repository.dart';
 class AuthBloc implements BaseBloc{
   Repository _repository = new Repository();
 
-  StreamController<AuthState> _authState = new StreamController<AuthState>();
+  StreamController<AuthState> _authState = new StreamController<AuthState>.broadcast();
   
 
   Stream<AuthState> get authState => _authState.stream;
