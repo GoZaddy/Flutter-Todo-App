@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/src/blocs/dashboard_bloc.dart';
 import 'package:todo_app/src/constants/Constants.dart';
+import 'package:todo_app/src/models/ListTodo.dart';
 import 'package:todo_app/src/models/TodoList.dart';
 import 'package:todo_app/src/models/User.dart';
 import 'package:todo_app/src/UI/widgets/ColorPickerButton.dart';
@@ -46,7 +48,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
 
   @override
   void didChangeDependencies() {
-    widget.todoList.init();
+    
     super.didChangeDependencies();
   }
 
@@ -216,25 +218,8 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
             ],
           ): SizedBox(height: 0.0),
           SizedBox(height: 30.0),
-          Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: widget.todoList.listOfTodos.map<Widget>(
-                  (todo){
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 5.0),
-                      width: double.infinity,
-                      child: ListTodoWidget(
-                        enableAddingDetails: _inEditingMode,
-                        checkboxAndTextSpace: 30.0,
-                        todo: todo,
-                        showDetails: true
-                      ),
-                    );
-                  }
-                ).toList()
-              ),
-          /* StreamBuilder<QuerySnapshot>(
-            stream: widget.todoList.,
+          StreamBuilder<QuerySnapshot>(
+            stream: _repository.getListTodos(uid: _currentUser.uid, listId: widget.todoList.listId),
             builder: (context, snapshot) {
 
               if(snapshot.connectionState == ConnectionState.waiting){
@@ -269,7 +254,8 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
               );
               } 
             }
-          ),*/
+          ),
+          /* */
           Row(
             children: <Widget>[
               GestureDetector(

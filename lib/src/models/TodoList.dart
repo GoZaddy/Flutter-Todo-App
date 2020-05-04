@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/src/models/ListTodo.dart';
@@ -20,26 +22,7 @@ class TodoList {
     this.listOfTodosStream
   });
 
-  void init(){
-    print("yayayayay");
-    this.listOfTodosStream.listen((snapshot){
-      this.listOfTodos = [];
-      snapshot.documents.map((documentSnapshot){
-        
-        print(documentSnapshot["title"]);
-        listOfTodos.add(
-          ListTodo(
-            isDone: documentSnapshot["isDone"],
-            title: documentSnapshot["title"],
-            todoId: documentSnapshot.documentID,
-            listId: listId,
-            details: documentSnapshot["details"]
-          )
-        );
-      });
-      print(this.listOfTodos);
-    });
-  }
+  
 
   
 }

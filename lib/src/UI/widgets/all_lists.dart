@@ -37,6 +37,7 @@ class AllLists extends StatelessWidget {
             }
             return Container(
               width: MediaQuery.of(context).size.width - 40,
+              //height: 00.0,
               child: LimitedBox(
                 maxHeight: 550.0,
                 child: ListView(
@@ -60,9 +61,8 @@ class AllLists extends StatelessWidget {
                         return ListWidget(
                           todoList: _newTodoList,
                           onTap: () {
-                            dashboardBloc.openList(_newTodoList);
                             showBottomSheet();
-                            
+                            dashboardBloc.openList(_newTodoList);
                           },
                         );
                       }).toList())

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/src/UI/widgets/all_lists.dart';
 import 'package:todo_app/src/UI/widgets/all_quick_notes.dart';
-import 'package:todo_app/src/bloc_providers/dashboard_bloc_provider.dart';
 import 'package:todo_app/src/blocs/dashboard_bloc.dart';
 import 'package:todo_app/src/models/User.dart';
 import 'package:todo_app/src/resources/auth_service.dart';
