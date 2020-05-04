@@ -68,7 +68,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
     
     print(widget.todoList.listOfTodos.toString());
     return Container(
-      padding: EdgeInsets.only(left: 40, right:40, top: 15, bottom: 35),
+      padding: EdgeInsets.only(left: 40, right:40, top: 15, bottom: 50),
       height: MediaQuery.of(context).size.height * 0.7,
       width: double.infinity,
       decoration: BoxDecoration(
@@ -105,7 +105,8 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
               children: <Widget>[
                 Expanded(
                   child: TextField(
-                    
+                    autofocus: true,
+                    enabled: _inEditingMode,
                     focusNode: _focusNode,
                     style: TextStyle(
                       fontFamily: "Poppins",
@@ -131,7 +132,8 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                   ),
                   onPressed: (){    
                      setState(() {                                             
-                       _inEditingMode = !_inEditingMode;                   
+                       _inEditingMode = !_inEditingMode;
+                                        
                     });
                     if(_inEditingMode == true){
                       _focusNode.requestFocus();
@@ -164,6 +166,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                           isSelectedColor: widget.todoList.backgroundColor == color,
                           color: color,
                           onTap: (){
+                            widget.todoList.backgroundColor = color;
                             _repository.setBackgroundColor(
                               uid: _currentUser.uid,
                               listId: widget.todoList.listId,
@@ -192,7 +195,9 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                                 child: Text("YES"),
                                 onPressed: (){
                                   Navigator.pop(context);
+                                  _focusNode.unfocus();
                                   widget.closeBottomSheet();
+                                  _focusNode.unfocus();
                                   _repository.deleteList(uid:_currentUser.uid, listId: widget.todoList.listId);
                                 },
                               ),
