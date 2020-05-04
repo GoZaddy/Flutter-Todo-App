@@ -2,26 +2,48 @@
 import 'package:animated_splash/animated_splash.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/models/User.dart';
+import 'package:todo_app/src/blocs/auth_bloc.dart';
+import 'package:todo_app/src/enums/enums.dart';
 
-import 'package:todo_app/services/AuthService.dart';
 
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   
 
   @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  AuthBloc authBloc;
+  @override
+  void didChangeDependencies() {
+    authBloc = Provider.of<AuthBloc>(context);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    authBloc.dispose();
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
-    AuthService _auth = new AuthService();
+    
     
     
     Widget _buildProgressIndicator (){
     return StreamBuilder(
       initialData: false,
-      stream: _auth.loading.stream,
+      stream: authBloc.authState,
       builder: (context, snapshot){
-        if(snapshot.data == true){
+        if(snapshot.data == AuthState.loading){
           return CircularProgressIndicator();
+        }
+        else if(snapshot.data == AuthState.error){
+          return Text(
+            "Error logging in"
+          );
         }
         else{
           return SizedBox(height:0);
@@ -76,7 +98,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
                   onPressed: () async{
-                    await _auth.googleSignIn();
+                    await authBloc.signInWithGoogle();
                   },
                   child: Text(
                     "Sign in with Google",

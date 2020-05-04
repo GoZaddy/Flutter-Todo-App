@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/constants/Constants.dart';
-import 'package:todo_app/models/ListTodo.dart';
-import 'package:todo_app/models/User.dart';
-import 'package:todo_app/widgets/SmallButton.dart';
+import 'package:todo_app/src/constants/Constants.dart';
+import 'package:todo_app/src/models/ListTodo.dart';
+import 'package:todo_app/src/models/User.dart';
+import 'package:todo_app/src/UI/widgets/SmallButton.dart';
+import 'package:todo_app/src/resources/repository.dart';
 
 class AddList extends StatefulWidget {
   @override
@@ -17,9 +18,11 @@ class _AddListState extends State<AddList> {
   Color _selectedColor = listOfColorsForColorPicker[2];
   List<ListTodo> _listOfTodos = [];
   String _listTitle;
-  TextEditingController _newTodoController = new TextEditingController();
-  TextEditingController _titleController = new TextEditingController();
-   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+
+  final TextEditingController _newTodoController = new TextEditingController();
+  final TextEditingController _titleController = new TextEditingController();
+  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final _repository = Repository();
 
    
    
@@ -106,7 +109,7 @@ class _AddListState extends State<AddList> {
                               );
                             }
                           );
-                          await _currentUser.addList(_listTitle, _listOfTodos, "#${_selectedColor.toString().substring(10,16)}");
+                          await _repository.addList(uid: _currentUser.uid, listTitle:  _listTitle, listOfTodos: _listOfTodos, listBackgroundColor:"#${_selectedColor.toString().substring(10,16)}");
                           Navigator.pop(context);
                           showDialog(
                             context: context,
