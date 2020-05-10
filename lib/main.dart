@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/src/UI/pages/AddNewList.dart';
 import 'package:todo_app/src/UI/pages/AddQuickNote.dart';
 import 'package:todo_app/src/UI/pages/HomePage.dart';
+import 'package:todo_app/src/bloc_providers/auth_bloc_provider.dart';
 import 'package:todo_app/src/bloc_providers/dashboard_bloc_provider.dart';
 import 'package:todo_app/src/resources/auth_service.dart';
 import 'package:todo_app/src/models/User.dart';
@@ -19,21 +20,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamProvider<User>.value(
       value: _authService.user,
-      child: DashboardBlocProvider(
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Todo App',
-          theme: ThemeData(
-            primaryColor: Color(0xff657AFF),
-            accentColor: Color(0xff4F5578),
-            primarySwatch: Colors.blue,
+      child: AuthBlocProvider(
+        child: DashboardBlocProvider(
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Todo App',
+            theme: ThemeData(
+              primaryColor: Color(0xff657AFF),
+              accentColor: Color(0xff4F5578),
+              primarySwatch: Colors.blue,
+            ),
+            initialRoute: "/",
+            routes: {
+              "/": (context) => HomePage(),
+              "/addQuickNote": (context) => AddQuickNote(),
+              "/addList": (context) => AddList()
+            },
           ),
-          initialRoute: "/",
-          routes: {
-            "/": (context) => HomePage(),
-            "/addQuickNote": (context) => AddQuickNote(),
-            "/addList": (context) => AddList()
-          },
         ),
       ),
     );

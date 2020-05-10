@@ -7,16 +7,16 @@ class FirestoreInteractions {
   Firestore _db = Firestore.instance;
 
   //Utility stuff
-  DocumentReference _getSpecificListDocument({String uid, String listId}){
+  DocumentReference _getSpecificListDocument({@required String uid, @required String listId}){
     return _db.collection("lists").document(uid).collection("userLists").document(listId);
   }
 
-  DocumentReference _getSpecificQuickNoteDocument({String uid, String quickNoteId}){
+  DocumentReference _getSpecificQuickNoteDocument({@required String uid, @required String quickNoteId}){
     return _db.collection("quickNotes").document(uid).collection("userNotes").document(quickNoteId);
   }
   
-  DocumentReference _getSpecificListTodoDocument({String uid, String listId, String todoId}){
-    return _getSpecificListTodoDocument(uid: uid, listId: listId).collection("todos").document(todoId);
+  DocumentReference _getSpecificListTodoDocument({@required String uid, @required String listId, @required String todoId}){
+    return _getSpecificListDocument(uid: uid, listId: listId).collection("todos").document(todoId);
   }
   //Dashboard stuff
 

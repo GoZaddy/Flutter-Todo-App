@@ -9,12 +9,13 @@ class DashboardBloc implements BaseBloc{
 
   final _repository = Repository();
 
-  StreamController<TodoList> _currentlyShownListController = new StreamController<TodoList>.broadcast();
+  final _currentlyShownListController = new StreamController<TodoList>.broadcast();
 
   Function(TodoList) get openList => _currentlyShownListController.sink.add;
 
   Stream<TodoList> get currentlyShownList => _currentlyShownListController.stream.asBroadcastStream();
 
+  
   
 
   Stream<QuerySnapshot> fetchQuickNotes(String uid){
