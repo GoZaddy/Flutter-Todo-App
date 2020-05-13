@@ -43,7 +43,7 @@ class TodoManagerRepositoryImpl implements TodoManagerRepository {
 
   @override
   void deleteQuickNote({String uid, String quickNoteId}) {
-    deleteQuickNote(uid: uid, quickNoteId: quickNoteId);
+    firestoreInteractions.deleteQuickNote(uid: uid, quickNoteId: quickNoteId);
   }
 
   @override
