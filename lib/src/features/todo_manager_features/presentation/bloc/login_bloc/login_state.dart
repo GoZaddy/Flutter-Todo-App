@@ -5,11 +5,13 @@ class LoginState{
   final bool isSuccess;
   final bool isFailure;
   final bool isSubmitting;
+  final String errorMessage;
 
   LoginState({
     @required this.isSuccess,
     @required this.isFailure,
-    @required this.isSubmitting
+    @required this.isSubmitting,
+    this.errorMessage
   });
 
   factory LoginState.empty(){
@@ -28,11 +30,12 @@ class LoginState{
     );
   }
 
-  factory LoginState.failure(){
+  factory LoginState.failure(String message){
     return LoginState(
       isFailure: true,
       isSubmitting: false,
-      isSuccess: false
+      isSuccess: false,
+      errorMessage: message
     );
   }
 

@@ -115,7 +115,16 @@ class ListWidget extends StatelessWidget {
                             }
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return CircularProgressIndicator();
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    child: CircularProgressIndicator()
+                                  ),
+                                ],
+                              );
                             }
                             return SizedBox(height: 0);
                           }),

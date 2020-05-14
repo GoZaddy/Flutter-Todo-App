@@ -75,7 +75,8 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                   ),
                   onPressed: () {
                     widget.closeBottomSheet();
-                  })
+                  }
+              )
             ],
           ),
           Expanded(

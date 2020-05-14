@@ -1,11 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/src/features/todo_manager_features/data/datasources/auth_service.dart';
 import 'package:todo_app/src/features/todo_manager_features/presentation/bloc/add_quick_note_bloc/add_quick_note_bloc.dart' as addNoteBloc;
 import 'package:todo_app/src/features/todo_manager_features/presentation/bloc/add_list_bloc/add_list_bloc.dart' as addListBloc;
 
 import './src/injection_container.dart' as di;
 import 'src/bloc_delegate.dart';
+import 'src/core/user/user.dart';
 import 'src/features/todo_manager_features/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'src/features/todo_manager_features/presentation/bloc/dashboard_bloc/dashboard_bloc.dart';
 import 'src/features/todo_manager_features/presentation/bloc/login_bloc/login_bloc.dart';
@@ -46,7 +48,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
+    
     return BlocProvider.value(
       value: _authBloc,
           child: MaterialApp(
@@ -68,9 +71,30 @@ class _MyAppState extends State<MyApp> {
                 }
 
                 else if(authState is AuthAuthenticated){
-                  return BlocProvider<DashboardBloc>(
-                    create: (context){return di.sl<DashboardBloc>();},
-                    child: DashboardScreen(),
+                  return FutureBuilder(
+                    future: di.sl.allReady(),
+                    builder: (context, snapshot) {
+                      if(snapshot.hasData){
+                        return BlocProvider<DashboardBloc>(
+                        create: (context){
+                          return di.sl<DashboardBloc>();
+                        },
+                        child: DashboardScreen(),
+                      );
+                      }
+                      else{
+                        return Scaffold(
+                          body: Center(
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        );
+                      }
+                      
+                    }
                   ); 
                 }
                 else{
@@ -82,6 +106,12 @@ class _MyAppState extends State<MyApp> {
               }
             ),
             routes: {
+              "/dashboard": (context) =>BlocProvider<DashboardBloc>(
+                    create: (context){
+                      return di.sl<DashboardBloc>();
+                    },
+                    child: DashboardScreen(),
+                  ),
               "/addQuickNote": (context) => BlocProvider<addNoteBloc.AddQuickNoteBloc>(
                 create: (context){return di.sl<addNoteBloc.AddQuickNoteBloc>();},
                 child: AddQuickNote()

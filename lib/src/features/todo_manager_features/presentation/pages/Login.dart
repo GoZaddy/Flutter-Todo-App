@@ -1,9 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/src/core/user/user.dart';
+import 'package:todo_app/src/features/todo_manager_features/data/datasources/auth_service.dart';
 import 'package:todo_app/src/features/todo_manager_features/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:todo_app/src/features/todo_manager_features/presentation/bloc/login_bloc/login_bloc.dart';
 import 'package:todo_app/src/features/todo_manager_features/presentation/widgets/slide_animation_provider.dart';
+
+import '../../../../injection_container.dart';
 
 
 
@@ -22,6 +26,7 @@ class _LoginPageState extends State<LoginPage> {
 
   
   Widget _buildProgressIndicator (BuildContext context){
+    
     return BlocBuilder(
       bloc: BlocProvider.of<LoginBloc>(context),
       builder: (context, LoginState state){
@@ -50,13 +55,33 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    
+   
     return Scaffold(
         body: BlocListener(
           bloc: BlocProvider.of<LoginBloc>(context),
-          listener: (context, LoginState state){
-            if (state.isSuccess){
+          listener: (context, LoginState state) async{
+            if (state.isSuccess) {
+              await sl.allReady();
               BlocProvider.of<AuthBloc>(context).add(LoggedIn());   
+            }
+            else if(state.isFailure){
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        state.errorMessage,
+                        style: TextStyle(
+                          color: Colors.red[500],
+                          fontFamily: "Poppins",
+                          fontSize: 25
+                        ),
+                      ),
+                    ],
+                  )
+                )
+              );
             }
           },
           child: Center(

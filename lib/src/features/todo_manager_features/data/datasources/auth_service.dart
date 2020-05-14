@@ -39,9 +39,6 @@ class AuthService {
 
   Future<User> getCurrentUser() async{
     final user = User.fromFirebaseUser(await _auth.currentUser());
-    if(user.uid == null){
-      return null;
-    }
     return user;
   }
 

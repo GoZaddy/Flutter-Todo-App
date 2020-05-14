@@ -23,6 +23,7 @@ final sl = GetIt.instance;
 
 
 Future<void> init() async{
+  sl.allowReassignment = true;
   //bloc
   sl.registerFactory(
     () => AuthBloc(authRepository: sl())
@@ -76,8 +77,12 @@ Future<void> init() async{
   sl.registerLazySingleton(() => AuthService());
 
   //core
+ 
   
-    sl.registerSingletonAsync<User>( () async => await sl<AuthService>().getCurrentUser());
+  sl<AuthService>().user.listen((user){
+    sl.registerSingleton<User>(user);
+  });
+  
   
   
   
