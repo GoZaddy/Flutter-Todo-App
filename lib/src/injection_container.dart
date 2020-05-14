@@ -6,6 +6,7 @@ import './features/todo_manager_features/domain/usecases/dashboard_use_cases.dar
 import './features/todo_manager_features/domain/usecases/edit_quick_note.dart' as editNoteUseCase;
 import './features/todo_manager_features/domain/usecases/edit_list.dart' as editListUseCase;
 import './features/todo_manager_features/domain/usecases/edit_list_todo.dart' as editListTodoUseCase;
+import 'core/user/user.dart';
 import 'features/todo_manager_features/data/datasources/auth_service.dart';
 import 'features/todo_manager_features/data/datasources/firestore_interactions.dart';
 import 'features/todo_manager_features/data/repositories/auth_repository_impl.dart';
@@ -75,9 +76,10 @@ Future<void> init() async{
   sl.registerLazySingleton(() => AuthService());
 
   //core
-  if(await sl<AuthRepository>().isSignedIn()){
-    sl.registerSingletonAsync( () async => await sl<AuthService>().getCurrentUser());
-  }
+  
+    sl.registerSingletonAsync<User>( () async => await sl<AuthService>().getCurrentUser());
+  
+  
   
 
   //external

@@ -39,7 +39,8 @@ class _AddQuickNoteState extends State<AddQuickNote> {
     super.initState();
     _suggestionsTextController.stream.listen((String suggestion) {
       _textController.value = _textController.value
-          .copyWith(text: _textController.text + suggestion);
+          .copyWith(text: _textController.text + suggestion + " ");
+      _textController.selection = TextSelection.fromPosition(TextPosition(offset: _textController.text.length));
     });
   }
 
