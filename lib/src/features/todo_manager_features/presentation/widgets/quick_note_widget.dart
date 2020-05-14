@@ -106,7 +106,11 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
                     value: widget.quickNoteInfo.isDone,
                     activeColor: Color(0x80878CAC),
                     checkColor: Colors.white,
-                    onChanged: (bool isChecked) {
+                    onChanged: (bool isChecked) async{
+                      setState(() {
+                        widget.quickNoteInfo.isDone = isChecked;
+                      });
+                      await Future.delayed(Duration(milliseconds: 250));
                       sl<SetQuickNoteIsDone>().call(
                           uid: sl<User>().uid,
                           quickNoteId: widget.quickNoteInfo.quickNoteId,
@@ -119,6 +123,7 @@ class _QuickNoteWidgetState extends State<QuickNoteWidget> {
                   width: MediaQuery.of(context).size.width * 0.65,
                   child: Text(
                     widget.quickNoteInfo.title,
+                    
                     style: TextStyle(
                         fontSize: 18.0,
                         decoration: widget.quickNoteInfo.isDone

@@ -20,6 +20,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomPadding: false,
         key: _scaffoldKey,
         body: Dashboard(
             bloc: BlocProvider.of<DashboardBloc>(context),

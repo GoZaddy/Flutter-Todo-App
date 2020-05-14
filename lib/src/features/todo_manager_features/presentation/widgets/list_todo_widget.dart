@@ -40,10 +40,11 @@ class _ListTodoWidgetState extends State<ListTodoWidget> {
               activeColor: Color(0x80ffffff),
               
               
-              onChanged: (bool newValue){
+              onChanged: (bool newValue) async{
                 setState(() {
                   _listTodoPassed.isDone = newValue;
                 });
+                await Future.delayed(Duration(milliseconds: 250));
                 sl<SetListTodoIsDone>().call(
                   uid:sl<User>().uid,
                   todoId: widget.todo.todoId,
@@ -62,8 +63,26 @@ class _ListTodoWidgetState extends State<ListTodoWidget> {
               children: <Widget>[
                 Column(  
                     children: <Widget>[
-                      Text(
+                      RichText(
+                        maxLines: widget.showDetails? null: 3,
+                        overflow: widget.showDetails ? TextOverflow.visible :TextOverflow.ellipsis,
+                        text: TextSpan(
+                          text: _listTodoPassed.title,
+                          
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 16,
+
+                            decoration: _listTodoPassed.isDone ? TextDecoration.lineThrough :TextDecoration.none,
+                            color: _listTodoPassed.isDone ? Color(0x80ffffff):Colors.white
+                          ),
+                          
+                        ),
+                        
+                      ),
+                      /*Text(
                         _listTodoPassed.title,
+                        maxLines: widget.enableAddingDetails? null: 3,
                         softWrap: true,
                         
                         style: TextStyle(
@@ -73,7 +92,7 @@ class _ListTodoWidgetState extends State<ListTodoWidget> {
                             decoration: _listTodoPassed.isDone ? TextDecoration.lineThrough :TextDecoration.none,
                             color: _listTodoPassed.isDone ? Color(0x80ffffff):Colors.white
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                 widget.showDetails && widget.todo.details != "" ? SizedBox(height: 20.0): SizedBox(height: 0.0),

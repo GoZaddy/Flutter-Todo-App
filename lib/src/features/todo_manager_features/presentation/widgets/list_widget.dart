@@ -127,7 +127,7 @@ class ListWidget extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(
+        /*Positioned(
           child: Material(
             color: Colors.transparent,
             child: InkWell(
@@ -171,7 +171,7 @@ class ListWidget extends StatelessWidget {
               ),
             ),
           ),
-        ),
+        ),*/
       ],
     );
   }
