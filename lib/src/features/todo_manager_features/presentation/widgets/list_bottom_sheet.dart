@@ -62,7 +62,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
       decoration: BoxDecoration(
           color: _temporaryColor,
           borderRadius: BorderRadius.only(topRight: Radius.circular(50))),
-      child: ListView(
+      child: Column(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -78,207 +78,211 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                   })
             ],
           ),
-          SizedBox(
-            height: 20.0,
-          ),
-          Container(
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(
-                        color: _inEditingMode == true
-                            ? Colors.blue[400]
-                            : Color(0x80FFFFFF)))),
-            child: Row(
+          Expanded(
+                      child: ListView(
               children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    autofocus: true,
-                    enabled: _inEditingMode,
-                    style: TextStyle(
-                        fontFamily: "Poppins",
-                        color: Colors.white,
-                        fontSize: 25.0),
-                    controller: _todoTitleController,
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "List title",
-                        hintStyle: TextStyle(color: Color(0x80ffffff))),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(
+                              color: _inEditingMode == true
+                                  ? Colors.blue[400]
+                                  : Color(0x80FFFFFF)))),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          autofocus: true,
+                          enabled: _inEditingMode,
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              color: Colors.white,
+                              fontSize: 25.0),
+                          controller: _todoTitleController,
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "List title",
+                              hintStyle: TextStyle(color: Color(0x80ffffff))),
+                        ),
+                      ),
+                      SizedBox(width: 20.0),
+                      IconButton(
+                        icon: Icon(
+                          _inEditingMode ? Icons.check : Icons.edit,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _inEditingMode = !_inEditingMode;
+                          });
+                          if (_inEditingMode == false) {
+                            print("Not in editing mode");
+                            sl<EditListTitle>().call(
+                                uid: sl<User>().uid,
+                                listId: widget.todoList.listId,
+                                newTitle: _todoTitleController.text);
+                            sl<EditBackgroundColor>()(
+                                uid: sl<User>().uid,
+                                listId: widget.todoList.listId,
+                                newColor: _temporaryColor);
+                          }
+                        },
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(width: 20.0),
-                IconButton(
-                  icon: Icon(
-                    _inEditingMode ? Icons.check : Icons.edit,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _inEditingMode = !_inEditingMode;
-                    });
-                    if (_inEditingMode == false) {
-                      print("Not in editing mode");
-                      sl<EditListTitle>().call(
-                        uid: sl<User>().uid,
-                        listId: widget.todoList.listId,
-                        newTitle: _todoTitleController.text
-                      );
-                      sl<EditBackgroundColor>()(
-                        uid: sl<User>().uid,
-                        listId: widget.todoList.listId,
-                        newColor: _temporaryColor
-                      );
-                    }
-                  },
+                SizedBox(height: 20.0),
+                _inEditingMode
+                    ? Column(
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: listOfColorsForColorPicker.map((color) {
+                                  return ColorPickerButton(
+                                    isSelectedColor: _temporaryColor == color,
+                                    color: color,
+                                    onTap: () {
+                                      setState(() {
+                                        _temporaryColor = color;
+                                      });
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("Delete this list"),
+                                          content: Text(
+                                              "Are you sure you want to delete this list?"),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              child: Text("YES"),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+
+                                                widget.closeBottomSheet();
+
+                                                sl<DeleteList>().call(
+                                                    uid: sl<User>().uid,
+                                                    listId:
+                                                        widget.todoList.listId);
+                                              },
+                                            ),
+                                            FlatButton(
+                                              child: Text("NO"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                },
+                              )
+                            ],
+                          ),
+                          Container(
+                              width: double.infinity,
+                              height: 1,
+                              color: Color(0x80ffffff))
+                        ],
+                      )
+                    : SizedBox(height: 0.0),
+                SizedBox(height: 20.0),
+                StreamBuilder<QuerySnapshot>(
+                    stream: sl<FetchListTodos>().call(
+                        uid: sl<User>().uid, listId: widget.todoList.listId),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                                width: 50,
+                                height: 50,
+                                child: CircularProgressIndicator()),
+                          ],
+                        );
+                      }
+                      if (snapshot.hasData) {
+                        return Container(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children:
+                                  snapshot.data.documents.map<Widget>((todo) {
+                                return Container(
+                                  margin: EdgeInsets.only(bottom: 5.0),
+                                  width: double.infinity,
+                                  child: ListTodoWidget(
+                                      enableAddingDetails: _inEditingMode,
+                                      checkboxAndTextSpace: 30.0,
+                                      todo: ListTodoModel.fromFirestoreInfo(
+                                          listId: widget.todoList.listId,
+                                          todoDoc: todo),
+                                      showDetails: true),
+                                );
+                              }).toList()),
+                        );
+                      }
+                    }),
+                /* */
+                Row(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        sl<AddListTodo>()(
+                            uid: sl<User>().uid,
+                            todoTitle: _newTodoController.text,
+                            listId: widget.todoList.listId);
+                        _newTodoController.text = "";
+                      },
+                      child: Container(
+                        height: 20,
+                        width: 20,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          color: Colors.white,
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.add,
+                            size: 16,
+                            color: _temporaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 30.0),
+                    Expanded(
+                      child: TextField(
+                        controller: _newTodoController,
+                        style: TextStyle(
+                            fontSize: 16.0,
+                            fontFamily: "Poppins",
+                            color: Colors.white),
+                        decoration: InputDecoration(
+                            border: InputBorder.none, hintText: "Add a new todo"),
+                      ),
+                    ),
+                  ],
                 )
               ],
             ),
           ),
-          SizedBox(height: 20.0),
-          _inEditingMode
-              ? Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: listOfColorsForColorPicker.map((color) {
-                            return ColorPickerButton(
-                              isSelectedColor: _temporaryColor == color,
-                              color: color,
-                              onTap: () {
-                                setState(() {
-                                  _temporaryColor = color;
-                                  
-                                });
-                              },
-                            );
-                          }).toList(),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.delete,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Delete this list"),
-                                    content: Text(
-                                        "Are you sure you want to delete this list?"),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text("YES"),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-
-                                          widget.closeBottomSheet();
-
-                                          sl<DeleteList>().call(
-                                              uid: sl<User>().uid,
-                                              listId: widget.todoList.listId);
-                                        },
-                                      ),
-                                      FlatButton(
-                                        child: Text("NO"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                });
-                          },
-                        )
-                      ],
-                    ),
-                    Container(
-                        width: double.infinity,
-                        height: 1,
-                        color: Color(0x80ffffff))
-                  ],
-                )
-              : SizedBox(height: 0.0),
-          SizedBox(height: 20.0),
-          StreamBuilder<QuerySnapshot>(
-              stream: sl<FetchListTodos>()
-                  .call(uid: sl<User>().uid, listId: widget.todoList.listId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                          width: 50,
-                          height: 50,
-                          child: CircularProgressIndicator()),
-                    ],
-                  );
-                }
-                if (snapshot.hasData) {
-                  return Container(
-                   
-                    child: Column(
-
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: snapshot.data.documents.map<Widget>((todo) {
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 5.0),
-                        width: double.infinity,
-                        child: ListTodoWidget(
-                            enableAddingDetails: _inEditingMode,
-                            checkboxAndTextSpace: 30.0,
-                            todo: ListTodoModel.fromFirestoreInfo(
-                                listId: widget.todoList.listId, todoDoc: todo),
-                            showDetails: true),
-                      );
-                    }).toList()),
-                  );
-                }
-              }),
-          /* */
-          Row(
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {
-                  sl<AddListTodo>()(
-                      uid: sl<User>().uid,
-                      todoTitle: _newTodoController.text,
-                      listId: widget.todoList.listId);
-                  _newTodoController.text = "";
-                },
-                child: Container(
-                  height: 20,
-                  width: 20,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: Colors.white,
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.add,
-                      size: 16,
-                      color: _temporaryColor,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 30.0),
-              Expanded(
-                child: TextField(
-                  controller: _newTodoController,
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      fontFamily: "Poppins",
-                      color: Colors.white),
-                  decoration: InputDecoration(
-                      border: InputBorder.none, hintText: "Add a new todo"),
-                ),
-              ),
-            ],
-          )
         ],
       ),
     );
