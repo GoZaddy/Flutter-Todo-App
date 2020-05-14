@@ -9,10 +9,11 @@ import 'src/bloc_delegate.dart';
 import 'src/features/todo_manager_features/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'src/features/todo_manager_features/presentation/bloc/dashboard_bloc/dashboard_bloc.dart';
 import 'src/features/todo_manager_features/presentation/bloc/login_bloc/login_bloc.dart';
-import 'src/features/todo_manager_features/presentation/pages/AddNewList.dart';
-import 'src/features/todo_manager_features/presentation/pages/AddQuickNote.dart';
+
 import 'src/features/todo_manager_features/presentation/pages/Dashboard.dart';
 import 'src/features/todo_manager_features/presentation/pages/Login.dart';
+import 'src/features/todo_manager_features/presentation/pages/add_new_list.dart';
+import 'src/features/todo_manager_features/presentation/pages/add_quick_note.dart';
 
 
 void main() async{
