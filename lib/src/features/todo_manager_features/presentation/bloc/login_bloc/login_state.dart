@@ -30,12 +30,12 @@ class LoginState{
     );
   }
 
-  factory LoginState.failure(String message){
+  factory LoginState.failure(){
     return LoginState(
       isFailure: true,
       isSubmitting: false,
       isSuccess: false,
-      errorMessage: message
+      //errorMessage: message
     );
   }
 

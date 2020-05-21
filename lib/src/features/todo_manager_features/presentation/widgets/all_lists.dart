@@ -31,34 +31,31 @@ class AllLists extends StatelessWidget {
             }
             return Container(
               width: MediaQuery.of(context).size.width - 40,
-              //height: 00.0,
-              child: LimitedBox(
-                maxHeight: 550.0,
-                child: ListView(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    children: <Widget>[
-                      Row(
-                          children: snapshot.data.documents
-                              .map<Widget>((DocumentSnapshot lists) {
-                        ListEntity _newTodoList =
-                            ListModel.fromFirestoreDoc(lists);
+              height: 450, 
+              child: ListView(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    Row(
+                        children: snapshot.data.documents
+                            .map<Widget>((DocumentSnapshot lists) {
+                      ListEntity _newTodoList =
+                          ListModel.fromFirestoreDoc(lists);
 
-                        return ListWidget(
-                          key: UniqueKey(),
-                          todoList: _newTodoList,
-                          onTap: () {
-                            print("tap list");
-                            print(_newTodoList.backgroundColor.toString());
-                            print(_newTodoList.listTitle);
-                            print(_newTodoList.listId);
-                            show(_newTodoList);
-                            //BlocProvider.of<DashboardBloc>(context).add(OpenList(_newTodoList));
-                          },
-                        );
-                      }).toList())
-                    ]),
-              ),
+                      return ListWidget(
+                        key: UniqueKey(),
+                        todoList: _newTodoList,
+                        onTap: () {
+                          print("tap list");
+                          print(_newTodoList.backgroundColor.toString());
+                          print(_newTodoList.listTitle);
+                          print(_newTodoList.listId);
+                          show(_newTodoList);
+                          //BlocProvider.of<DashboardBloc>(context).add(OpenList(_newTodoList));
+                        },
+                      );
+                    }).toList())
+                  ]),
             );
           }
           if (snapshot.connectionState == ConnectionState.waiting) {

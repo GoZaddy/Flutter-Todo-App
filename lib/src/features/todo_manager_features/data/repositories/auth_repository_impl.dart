@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:todo_app/src/core/error/exceptions.dart';
 import 'package:todo_app/src/core/user/user.dart';
 import 'package:todo_app/src/features/todo_manager_features/data/datasources/auth_service.dart';
@@ -17,12 +18,16 @@ class AuthRepositoryImpl implements AuthRepository{
       final user = await authService.googleSignIn();
       return Right(user);
     }
-    on AuthException{
-      return Left(AuthFailure());
-    }
-
-    on NoNetworkException{
-      return Left(NoNetworkFailure());
+    on PlatformException catch(e){
+      if(e.code == 'sign_in_failed'){
+        return Left(AuthFailure());
+      }
+      else if(e.code == 'network_error'){
+        return Left(NoNetworkFailure());
+      }
+      else{
+        print(e);
+      }
     }
     
   }

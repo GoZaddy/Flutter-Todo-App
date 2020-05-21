@@ -13,10 +13,6 @@ import '../../../../injection_container.dart';
 
 
 class LoginPage extends StatefulWidget {
-  
-  
- 
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -35,7 +31,12 @@ class _LoginPageState extends State<LoginPage> {
         }
         else if(state.isFailure){
           return Text(
-            "Error logging in"
+            "Try again!",
+            style: TextStyle(
+              fontFamily: "Poppins",
+              fontSize: 19,
+              color: Colors.red
+            ),
           );
         }
         
@@ -57,6 +58,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
    
     return Scaffold(
+        backgroundColor: Colors.white,
         body: BlocListener(
           bloc: BlocProvider.of<LoginBloc>(context),
           listener: (context, LoginState state) async{
@@ -71,11 +73,11 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        state.errorMessage,
+                        "Error Logging in",
                         style: TextStyle(
                           color: Colors.red[500],
                           fontFamily: "Poppins",
-                          fontSize: 25
+                          fontSize: 20
                         ),
                       ),
                     ],

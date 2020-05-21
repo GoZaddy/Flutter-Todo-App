@@ -50,7 +50,7 @@ class AuthService {
   
 
   Future<FirebaseUser> googleSignIn() async {
-    try{
+    
       GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       AuthResult result = await _auth.signInWithCredential(GoogleAuthProvider.getCredential(
@@ -60,18 +60,8 @@ class AuthService {
       updateUserData(user); 
       
       return user; 
-    }
-    on PlatformException catch(e){
-      if(e.code == 'sign_in_failed'){
-        throw AuthException;
-      }
-      else if(e.code == 'network_error'){
-        throw exception.NoNetworkException;
-      }
-      else{
-        print(e);
-      }
-    }
+    
+    
   }
 
   void updateUserData(FirebaseUser user) async {

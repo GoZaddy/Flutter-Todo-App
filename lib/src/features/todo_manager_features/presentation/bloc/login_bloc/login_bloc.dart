@@ -24,19 +24,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> mapEventToState(
     LoginEvent event,
   ) async* {
-    if(event is LoginWithGooglePressed){
-      try{
-        yield LoginState.loading();
-      final result  = await _authRepository.signInWithGoogle();
+    if (event is LoginWithGooglePressed) {
+      yield LoginState.loading();
+      final result = await _authRepository.signInWithGoogle();
       yield result.fold(
-        (failure) => LoginState.failure("Error signing in!"),
-        (user) => LoginState.success()
-      );
-      }
-      on NoNetworkException {
-        yield LoginState.failure("No Network");
-      }
-      
+          (failure) => LoginState.failure(), (user) => LoginState.success());
     }
   }
 }

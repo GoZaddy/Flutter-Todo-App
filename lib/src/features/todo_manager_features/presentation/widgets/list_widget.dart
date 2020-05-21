@@ -24,7 +24,7 @@ class ListWidget extends StatelessWidget {
           onTap: onTap,
           child: Container(
             margin: EdgeInsets.fromLTRB(0.0, 0.0, 40.0, 0.0),
-            height: 600,
+            height: 450,
             width: 250.0,
             decoration: BoxDecoration(
                 color: todoList.backgroundColor,
@@ -36,9 +36,9 @@ class ListWidget extends StatelessWidget {
                       spreadRadius: 0)
                 ],
                 borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20.0),
-                    bottomLeft: Radius.circular(20.0),
-                    bottomRight: Radius.circular(20.0))),
+                    topRight: Radius.circular(35.0),
+                    bottomLeft: Radius.circular(35.0),
+                    bottomRight: Radius.circular(35.0))),
             child: Container(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -46,12 +46,13 @@ class ListWidget extends StatelessWidget {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(
-                        left: 30.0, right: 50.0, top: 20.0, bottom: 20.0),
+                        left: 30.0, right: 30.0, top: 20.0, bottom: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          width: 100.0,
+                          width: 190.0,
+                          //color: Colors.red,
                           child: Text(
                             todoList.listTitle,
                             style: TextStyle(
@@ -72,7 +73,7 @@ class ListWidget extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(
-                          left: 30.0, right: 50.0, top: 10.0, bottom: 20.0),
+                          left: 25.0, right: 25.0, top: 10.0, bottom: 20.0),
                       child: StreamBuilder<QuerySnapshot>(
                           stream: todoList.listOfTodosStream,
                           builder: (context, snapshot) {
@@ -84,7 +85,7 @@ class ListWidget extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: snapshot.data.documents
-                                        .take(4)
+                                        .take(6)
                                         .map((todo) {
                                       return ListTodoWidget(
                                         todo: ListTodoModel.fromFirestoreInfo(

@@ -1,13 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:todo_app/src/features/todo_manager_features/data/datasources/auth_service.dart';
 import 'package:todo_app/src/features/todo_manager_features/presentation/bloc/add_quick_note_bloc/add_quick_note_bloc.dart' as addNoteBloc;
 import 'package:todo_app/src/features/todo_manager_features/presentation/bloc/add_list_bloc/add_list_bloc.dart' as addListBloc;
 
 import './src/injection_container.dart' as di;
 import 'src/bloc_delegate.dart';
-import 'src/core/user/user.dart';
 import 'src/features/todo_manager_features/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'src/features/todo_manager_features/presentation/bloc/dashboard_bloc/dashboard_bloc.dart';
 import 'src/features/todo_manager_features/presentation/bloc/login_bloc/login_bloc.dart';
@@ -23,6 +23,8 @@ void main() async{
   await di.init();
   BlocSupervisor.delegate = MyBlocDelegate();
   await di.sl.allReady();
+  await FlutterStatusbarcolor.setStatusBarColor(Colors.white.withOpacity(0.95));
+  FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
   runApp(MyApp());
 }
 

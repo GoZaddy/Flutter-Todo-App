@@ -15,10 +15,12 @@ import 'list_todo_widget.dart';
 class ListBottomSheet extends StatefulWidget {
   final ListEntity todoList;
   final VoidCallback closeBottomSheet;
+  final PersistentBottomSheetController controller;
 
   ListBottomSheet({
     this.todoList,
     this.closeBottomSheet,
+    this.controller
   });
 
   @override
@@ -27,8 +29,8 @@ class ListBottomSheet extends StatefulWidget {
 
 class _ListBottomSheetState extends State<ListBottomSheet> {
   bool _inEditingMode = false;
-  TextEditingController _todoTitleController = new TextEditingController();
-  TextEditingController _newTodoController = new TextEditingController();
+  final TextEditingController _todoTitleController = new TextEditingController();
+  final TextEditingController _newTodoController = new TextEditingController();
 
   Color _temporaryColor;
 
@@ -74,6 +76,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                     size: 25,
                   ),
                   onPressed: () {
+                    //Navigator.pop(context);
                     widget.closeBottomSheet();
                   }
               )
@@ -116,7 +119,8 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                           color: Colors.white,
                         ),
                         onPressed: () {
-                          setState(() {
+                          
+                          widget.controller.setState(() {
                             _inEditingMode = !_inEditingMode;
                           });
                           if (_inEditingMode == false) {
@@ -149,7 +153,7 @@ class _ListBottomSheetState extends State<ListBottomSheet> {
                                     isSelectedColor: _temporaryColor == color,
                                     color: color,
                                     onTap: () {
-                                      setState(() {
+                                      widget.controller.setState(() {
                                         _temporaryColor = color;
                                       });
                                     },

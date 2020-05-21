@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/src/features/todo_manager_features/presentation/widgets/no_widget.dart';
 
 import '../../../../core/user/user.dart';
 import '../../../../injection_container.dart';
@@ -21,8 +22,10 @@ class DashboardScreen extends StatelessWidget {
     
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.white,
         resizeToAvoidBottomPadding: false,
         key: _scaffoldKey,
+        
         body: Dashboard(
             bloc: BlocProvider.of<DashboardBloc>(context),
             scaffoldKey: _scaffoldKey),
@@ -175,15 +178,28 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _showBottomSheet(ListEntity list) {
-    _controller =
+    
+    
+  _controller =
         this.widget.scaffoldKey.currentState.showBottomSheet((context) {
-      return ListBottomSheet(
-        todoList: list,
-        closeBottomSheet: () {
-          _closeBottomSheet();
-        },
+      return AnimatedPadding(
+        padding: MediaQuery.of(context).viewInsets,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.decelerate,
+        child: ListBottomSheet(
+          controller: _controller,
+          todoList: list,
+          closeBottomSheet: () {
+            _closeBottomSheet();
+          },
+        ),
       );
-    });
+    },
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(topRight: Radius.circular(50))
+    )
+    );
+    
   }
 
   void _closeBottomSheet() {
@@ -199,8 +215,10 @@ class _DashboardState extends State<Dashboard> {
       children: <Widget>[
         AppBar(
           leading: MenuIcon(),
+          actions: <Widget>[NoWidget()],
           elevation: 0.0,
           backgroundColor: Colors.transparent,
+          
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

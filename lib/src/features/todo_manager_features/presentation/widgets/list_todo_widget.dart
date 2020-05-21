@@ -64,7 +64,7 @@ class _ListTodoWidgetState extends State<ListTodoWidget> {
                 Column(  
                     children: <Widget>[
                       RichText(
-                        maxLines: widget.showDetails? null: 3,
+                        maxLines: widget.showDetails? null: 1,
                         overflow: widget.showDetails ? TextOverflow.visible :TextOverflow.ellipsis,
                         text: TextSpan(
                           text: _listTodoPassed.title,
