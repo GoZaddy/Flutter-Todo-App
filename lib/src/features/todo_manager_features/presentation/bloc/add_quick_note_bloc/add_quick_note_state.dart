@@ -13,7 +13,7 @@ class AddQuickNoteInitial extends AddQuickNoteState {
 }
 
 class QuickNoteAdded extends AddQuickNoteState{
-
+  
 }
 
 class Error extends AddQuickNoteState{

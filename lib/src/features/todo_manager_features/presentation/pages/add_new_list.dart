@@ -208,12 +208,15 @@ class _AddListState extends State<AddList> {
                                         color: _selectedColor),
                                   ),
                                   SizedBox(width: 40.0),
-                                  Text(
-                                    todo.title,
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontFamily: "Poppins",
-                                        color: Theme.of(context).accentColor),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width * 0.8 > 300 ? 300: MediaQuery.of(context).size.width,
+                                    child: Text(
+                                      todo.title,
+                                      style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontFamily: "Poppins",
+                                          color: Theme.of(context).accentColor),
+                                    ),
                                   )
                                 ],
                               ),

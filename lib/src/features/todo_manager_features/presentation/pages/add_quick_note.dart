@@ -12,9 +12,6 @@ import 'package:todo_app/src/features/todo_manager_features/presentation/widgets
 import 'package:todo_app/src/features/todo_manager_features/presentation/widgets/suggestion_tile.dart';
 
 class AddQuickNote extends StatefulWidget {
-  
-
-  
   @override
   _AddQuickNoteState createState() => _AddQuickNoteState();
 }
@@ -40,7 +37,8 @@ class _AddQuickNoteState extends State<AddQuickNote> {
     _suggestionsTextController.stream.listen((String suggestion) {
       _textController.value = _textController.value
           .copyWith(text: _textController.text + suggestion + " ");
-      _textController.selection = TextSelection.fromPosition(TextPosition(offset: _textController.text.length));
+      _textController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _textController.text.length));
     });
   }
 
@@ -48,7 +46,7 @@ class _AddQuickNoteState extends State<AddQuickNote> {
   void dispose() {
     _suggestionsTextController.close();
     _textController.dispose();
-    
+
     super.dispose();
   }
 
@@ -68,14 +66,19 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                 return AlertDialog(
                   title: Text("New Quick note added"),
                 );
-              }).then((value) {
-            _suggestionsTextController.sink.add("");
-            _quickNoteTitle = "";
-            _textController.text = "";
-            setState(() {
-              _selectedPriorityValue = 3;
-            });
-            _quickNotePriority = Priority.fromPriorityValue(3);
+              });
+
+            //reset default values
+          _suggestionsTextController.sink.add("");
+          _quickNoteTitle = "";
+          _textController.text = "";
+          setState(() {
+            _selectedPriorityValue = 3;
+          });
+          _quickNotePriority = Priority.fromPriorityValue(3);
+
+          Future.delayed(Duration(milliseconds: 500), () {
+            Navigator.pop(context);
           });
         }
       },
@@ -133,7 +136,8 @@ class _AddQuickNoteState extends State<AddQuickNote> {
                           color: Colors.white,
                         ),
                         onPressed: () {
-                          BlocProvider.of<AddQuickNoteBloc>(context).add(bloc.AddQuickNote({
+                          BlocProvider.of<AddQuickNoteBloc>(context)
+                              .add(bloc.AddQuickNote({
                             "priority": _quickNotePriority.priorityValue,
                             "title": _quickNoteTitle,
                             "isDone": false

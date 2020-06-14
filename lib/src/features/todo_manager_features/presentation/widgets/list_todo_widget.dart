@@ -114,15 +114,6 @@ class _ListTodoWidgetState extends State<ListTodoWidget> {
               ],
             ),
           ),
-          widget.enableAddingDetails ? IconButton(
-            icon: Icon(
-              Icons.add,
-              color: Colors.white
-            ),
-            onPressed: (){
-              
-            }
-          ): NoWidget()
         ],
       ),
     );

@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:todo_app/src/core/user/user.dart';
 
-import '../../../../core/error/exceptions.dart' as exception;
 
 class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -48,7 +46,6 @@ class AuthService {
   }
 
   
-
   Future<FirebaseUser> googleSignIn() async {
     
       GoogleSignInAccount googleUser = await _googleSignIn.signIn();

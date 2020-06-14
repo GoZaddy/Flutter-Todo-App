@@ -30,6 +30,7 @@ class AddQuickNoteBloc extends Bloc<AddQuickNoteEvent, AddQuickNoteState> {
       if(event is AddQuickNote){
       _addQuickNote(uid: _user.uid, quickNoteData: event.quickNoteData);
       yield QuickNoteAdded();
+      yield AddQuickNoteInitial();
     }
     }
     catch(e){
